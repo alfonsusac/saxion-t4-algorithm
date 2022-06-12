@@ -20,3 +20,8 @@ C:\Work\University\Term 4 Saxion\GXPAlgorithm\cmgt.algorithms.student\assignment
 C:\Work\University\Term 4 Saxion\GXPAlgorithm\cmgt.algorithms.student\assignment\obj\Debug\Algorithms.csproj.CoreCompileInputs.cache
 C:\Work\University\Term 4 Saxion\GXPAlgorithm\cmgt.algorithms.student\assignment\obj\Debug\dcg.exe
 C:\Work\University\Term 4 Saxion\GXPAlgorithm\cmgt.algorithms.student\assignment\obj\Debug\dcg.pdb
+C:\Work\University\Term 4 Saxion\saxion-t4-algorithm\assignment\obj\Debug\Algorithms.csproj.AssemblyReference.cache
+C:\Work\University\Term 4 Saxion\saxion-t4-algorithm\assignment\obj\Debug\Algorithms.csproj.SuggestedBindingRedirects.cache
+C:\Work\University\Term 4 Saxion\saxion-t4-algorithm\assignment\obj\Debug\Algorithms.csproj.CoreCompileInputs.cache
+C:\Work\University\Term 4 Saxion\saxion-t4-algorithm\assignment\obj\Debug\dcg.exe
+C:\Work\University\Term 4 Saxion\saxion-t4-algorithm\assignment\obj\Debug\dcg.pdb
