@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\info\.Rider2018.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\info\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_GXPEngine.852890952.00" t="ExcludeRecursive" />
+    <e p="D:\data\Dropbox\HW\saxion\curriculum_ontwikkeling\courses\algorithms\003_playground\starting_code\gxpengine" t="IncludeFlat">
+      <e p="gxpengine" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="gxpengine" t="Include">
+          <e p="AddOns" t="Include">
+            <e p="Camera.cs" t="Include" />
+            <e p="EasyDraw.cs" t="Include" />
+            <e p="HierarchyManager.cs" t="Include" />
+            <e p="Settings.cs" t="Include" />
+            <e p="TiledMapParser.cs" t="Include" />
+            <e p="Window.cs" t="Include" />
+          </e>
+          <e p="AnimationSprite.cs" t="Include" />
+          <e p="Canvas.cs" t="Include" />
+          <e p="Core" t="Include">
+            <e p="BlendMode.cs" t="Include" />
+            <e p="BoxCollider.cs" t="Include" />
+            <e p="Collider.cs" t="Include" />
+            <e p="GLContext.cs" t="Include" />
+            <e p="Rectangle.cs" t="Include" />
+            <e p="Texture2D.cs" t="Include" />
+            <e p="Transformable.cs" t="Include" />
+            <e p="Vector2.cs" t="Include" />
+          </e>
+          <e p="FMOD" t="Include">
+            <e p="FMOD.cs" t="Include" />
+          </e>
+          <e p="Game.cs" t="Include" />
+          <e p="GameObject.cs" t="Include" />
+          <e p="Managers" t="Include">
+            <e p="CollisionManager.cs" t="Include" />
+            <e p="UpdateManager.cs" t="Include" />
+          </e>
+          <e p="Mathf.cs" t="Include" />
+          <e p="OpenGL" t="Include">
+            <e p="GL.cs" t="Include" />
+          </e>
+          <e p="Pivot.cs" t="Include" />
+          <e p="Sound.cs" t="Include" />
+          <e p="SoundChannel.cs" t="Include" />
+          <e p="Sprite.cs" t="Include" />
+          <e p="Utils" t="Include">
+            <e p="Input.cs" t="Include" />
+            <e p="Key.cs" t="Include" />
+            <e p="MouseHandler.cs" t="Include" />
+            <e p="Time.cs" t="Include" />
+            <e p="Utils.cs" t="Include" />
+          </e>
+        </e>
+        <e p="GXPEngine.csproj" t="IncludeRecursive" />
+        <e p="MyGame.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+      </e>
+      <e p="GXPEngine.sln" t="IncludeFlat" />
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>
