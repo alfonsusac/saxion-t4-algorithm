@@ -145,7 +145,7 @@ class AlgorithmsAssignment : Game
 		if (_tiledView != null) _tiledView.Generate();
 
 		//--
-		(_graph as LowLevelDungeonNodeGraph).generateTiled(_tiledView as TiledDungeonView);
+		if(_graph is LowLevelDungeonNodeGraph) (_graph as LowLevelDungeonNodeGraph).generateTiled(_tiledView as TiledDungeonView);
 		//--
 
 
@@ -203,8 +203,9 @@ class AlgorithmsAssignment : Game
 
 		NodeLabelDrawer _nodeLabelDrawer = new NodeLabelDrawer(_graph, _agent);
 		_nodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
-		(_agent as RandomWayPointAgent).SetLabelDrawer(_nodeLabelDrawer);
-		
+		if(_agent is RandomWayPointAgent) (_agent as RandomWayPointAgent).SetLabelDrawer(_nodeLabelDrawer);
+		if(_pathFinder is RecursivePathFinder) (_pathFinder as RecursivePathFinder).SetLabelDrawer(_nodeLabelDrawer);
+
 
 		if (grid != null) AddChild(grid);
 		if (_dungeon != null) AddChild(_dungeon);

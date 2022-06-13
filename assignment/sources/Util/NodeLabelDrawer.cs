@@ -16,7 +16,7 @@ class NodeLabelDrawer : Canvas
 	private NodeGraphAgent _agent = null;
 	private RandomWayPointAgent _rwagent = null;
 
-	public bool disableDrawing = true;
+	public bool disableDrawing = false;
 
 	public NodeLabelDrawer(NodeGraph pNodeGraph, NodeGraphAgent pNodeGraphAgent) : base(pNodeGraph.width, pNodeGraph.height)
 	{
@@ -91,14 +91,22 @@ class NodeLabelDrawer : Canvas
 					if (_showLabels) drawNode(q.ToArray()[i], Brushes.Black);
 					if (i < q.Count - 1)
 					{
-						Pen p = new Pen(Color.FromArgb(100, Color.White), nodeSize * 2 - 2);
-						p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
-						graphics.DrawLine(p, q.ToArray()[i].location, q.ToArray()[i + 1].location);
+						drawConnections(q.ToArray()[i], q.ToArray()[i + 1]);
 					}
 				}
 			}
 		}
 		drawMarkedNode();
+	}
+
+	internal void drawConnections(Node n1, Node n2, Pen q = null)
+    {
+		if(q == null)
+        {
+			q = new Pen(Color.FromArgb(100, Color.White), nodeSize * 2 - 2);
+			q.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
+		}
+		graphics.DrawLine(q, n1.location, n2.location);
 	}
 
 	internal void clearQueueLabels()
