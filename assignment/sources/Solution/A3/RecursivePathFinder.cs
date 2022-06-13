@@ -19,6 +19,7 @@ class RecursivePathFinder : PathFinder
 	Node destination { get; set; }
 	int shortestDist = int.MaxValue;
 	List<Node> shortestPath;
+	bool running;
 
 	private void init(Node dest)
 	{
@@ -30,6 +31,7 @@ class RecursivePathFinder : PathFinder
 		nodeVisited = 0;
 		edgeVisited = 0;
 		traverseCalls = 0;
+		running = false;
 	}
 
 	protected override List<Node> generate(Node pFrom, Node pTo)
@@ -37,7 +39,8 @@ class RecursivePathFinder : PathFinder
 		init(pTo);
 		startDiagnostic("Recursive Path Finder");
 		new Traverse(this, pFrom);
-        endDiagnostic($"N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls}");
+		running = true;
+		
 		return shortestPath;
 	}
 
@@ -62,7 +65,7 @@ class RecursivePathFinder : PathFinder
         }
         else if (n == destination)
         {
-			Console.WriteLine($"[{dist}] Traversing ... : Found Destination! ZZ {path.Count + 1}");
+			Console.WriteLine($"[{dist}] Traversing ... : Found Destination! {path.Count + 1}");
 		}
 
 		// If this node has been visited, then skip this node.
@@ -70,22 +73,20 @@ class RecursivePathFinder : PathFinder
 		// so
 		// if nothing wrong,  if this node has NOT been visited AND has Childrens,
 		// then traverse through its children
-		//if (!path.Contains(n) && n.connections.Count != 0)
 		if (n.connections.Count != 0)
         {
 			// Add current node to the traveled path
 			path.Add(n); nodeVisited++;
-			_labelDrawer.countVisits(n);
+            _labelDrawer.countVisits(n);
 
-			// Iterate to every child
-			foreach (Node child in n.connections)
+            // Iterate to every child
+            foreach (Node child in n.connections)
             {
-				Console.WriteLine($"[{dist}] Traversing ... : Paths!");
-				path.ForEach(e => Console.Write(e + " ")); Console.WriteLine("");
+				//Console.WriteLine($"[{dist}] Traversing ... : Paths!");
+				//path.ForEach(e => Console.Write(e + " ")); Console.WriteLine("");
 
 				if (!path.Contains(child))
                 {
-                    _labelDrawer.drawConnections(n, child, dist + 1);
 					new Traverse(this, child, path, dist + 1); edgeVisited++;
                 }
             }
@@ -113,11 +114,16 @@ class RecursivePathFinder : PathFinder
 
 			r.callstack.Push(this);
 
-			//Console.WriteLine("=== Traaverse Func queued! ===");
-			//if (l == null) Console.WriteLine($"= Node: {n} | List: null | Distance: {i}");
-			//else { Console.Write($"= Node: {n} | List: "); travelPath.ForEach(e => Console.Write(e + " ")); Console.WriteLine($"({travelPath.Count}) | Distance: {i}"); }
+			_labelDrawer.drawPaths(l);
 		}
-		public void Run(){ recpathfinder.traverse(currentNode, travelPath, distance); }
+        public override string ToString()
+        {
+			string s;
+			if (travelPath == null) s = $"= Node: {currentNode} | List: null | Distance: {distance}";
+			else { s = $"= Node: {currentNode} | List: "; travelPath.ForEach(e => s += e + " "); s += $"({travelPath.Count}) | Distance: {distance}"; }
+			return s;
+        }
+        public void Run(){ recpathfinder.traverse(currentNode, travelPath, distance); }
 
 	}
 
@@ -130,19 +136,23 @@ class RecursivePathFinder : PathFinder
 		if (lastRun == 0) lastRun = Time.now;
 		if (Time.now - lastRun > 10)
         {
-            _labelDrawer.clearQueueLabels();
             lastRun = Time.now;
 			if(callstack.Count > 0) CallfromStack();
+			if(running == true && callstack.Count == 0)
+            {
+				endDiagnostic($"N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls}");
+				Console.WriteLine("Recursive Generation Completed!");
+				_lastCalculatedPath = shortestPath;
+				draw();
+				running = false;
+            }
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	// for visualization
-	NodeLabelDrawer _labelDrawer;
-	public void SetLabelDrawer(NodeLabelDrawer n)
-	{
-		_labelDrawer = n;
-	}
+	static NodeLabelDrawer _labelDrawer;
+	public void SetLabelDrawer(NodeLabelDrawer n){_labelDrawer = n;	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	// for diagnostics

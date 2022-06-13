@@ -48,29 +48,25 @@ class NodeLabelDrawer : Canvas
             graphics.Clear(Color.Transparent);
             if (_showLabels && !disableDrawing) drawLabels();
         }
-
-  //      if (_rwagent.IsMoving)
-  //      {
-		//	if (_rwagent.TargetsQueue.Count > 0)
-		//	{
-		//		Queue<Node> q = _rwagent.TargetsQueue;
-		//		for (int i = 0; i < q.Count; i++)
-		//		{
-		//			drawNode(q.ToArray()[i], Brushes.Red);
-		//			if (i < q.Count - 1)
-  //                  {
-		//				Pen p = new Pen(Color.Red, 2);
-		//				graphics.DrawLine(p, q.ToArray()[i].location, q.ToArray()[i + 1].location);
-  //                  }
-		//		}
-		//	}
-  //      }
-  //      else
-  //      {
-
-		//}
-		//drawActiveLabels();
 	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////
+	/// PathAgent visualization helper methods
+	internal void drawPaths(List<Node> l)
+    {
+		graphics.Clear(Color.Transparent);
+		if (l == null || l.Count == 0 ) return;
+		Node prevN = null;
+		foreach(Node n in l)
+        {
+			if (prevN == null) prevN = n;
+			else
+            {
+				drawConnections(prevN, n, 10);
+            }
+			prevN = n;
+        }
+    }
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	/// NodeGraph visualization helper methods

@@ -67,8 +67,6 @@ abstract class PathFinder : Canvas
 
 		draw();
 
-		_startNode = null;
-		_endNode = null;
 
 		System.Console.WriteLine(this.GetType().Name + ".Generate: Path generated.");
 		return _lastCalculatedPath;
@@ -180,7 +178,6 @@ abstract class PathFinder : Canvas
 		{
 			if (_startNode != null && _endNode != null)
 			{
-				//new Thread( e => Generate(_startNode, _endNode)  ).Start();
                 Generate(_startNode, _endNode);
             }
 		}
