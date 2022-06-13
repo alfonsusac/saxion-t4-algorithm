@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Threading;
 
 /**
  * Helper class that draws nodelabels for a nodegraph.
@@ -99,21 +100,22 @@ class NodeLabelDrawer : Canvas
 		}
 		drawMarkedNode();
 	}
-
-	internal void drawConnections(Node n1, Node n2, Pen q = null)
+	internal void drawConnections(Node n1, Node n2, int depth = 0, Pen q = null)
     {
 		if(q == null)
         {
-			q = new Pen(Color.FromArgb(100, Color.White), nodeSize * 2 - 2);
+			if (depth == 0) depth = nodeSize * 2 -2;
+			q = new Pen(Color.FromArgb(100, Color.White), depth);
 			q.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
 		}
 		graphics.DrawLine(q, n1.location, n2.location);
-	}
+    }
 
-	internal void clearQueueLabels()
+    internal void clearQueueLabels()
     {
 		graphics.Clear(Color.Transparent);
 		marked.Clear();
+		resetCounts();
 		if (_showLabels) drawLabels();
 	}
 

@@ -31,5 +31,8 @@ class SamplePathFinder : PathFinder	{
 		}
 	}
 
+    protected override void iterateSteps()
+    {
+    }
 }
 

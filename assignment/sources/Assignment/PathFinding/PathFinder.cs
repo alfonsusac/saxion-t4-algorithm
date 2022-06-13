@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 
 /**
  * This class is the base class for your pathfinder, you 'only' have to override generate so that it returns
@@ -65,6 +66,9 @@ abstract class PathFinder : Canvas
 		}
 
 		draw();
+
+		_startNode = null;
+		_endNode = null;
 
 		System.Console.WriteLine(this.GetType().Name + ".Generate: Path generated.");
 		return _lastCalculatedPath;
@@ -155,7 +159,12 @@ abstract class PathFinder : Canvas
 	public void Update()
 	{
 		handleInput();
+
+		// added for easy visualization
+		iterateSteps();
 	}
+
+	protected abstract void iterateSteps();
 
 	protected virtual void handleInput()
 	{
@@ -171,10 +180,9 @@ abstract class PathFinder : Canvas
 		{
 			if (_startNode != null && _endNode != null)
 			{
-				Generate(_startNode, _endNode);
-			}
+				//new Thread( e => Generate(_startNode, _endNode)  ).Start();
+                Generate(_startNode, _endNode);
+            }
 		}
 	}
-
-
 }

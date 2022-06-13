@@ -3,74 +3,52 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 
-/**
- * An example of a PathFinder implementation which completes the process by rolling a die 
- * and just returning the straight-as-the-crow-flies path if you roll a 6 ;). 
- */
 class RecursivePathFinder : PathFinder
 {
 
 	public RecursivePathFinder(NodeGraph pGraph) : base(pGraph) { }
 
-	//internal class NodeScore
- //   {
-	//	internal Node Node { get; set; }
-	//	internal int SmallestScore { get; set; }
-	//	internal bool isVisited { get; set; }
-	//	internal NodeScore(Node _node, int _smallestScore, bool _visited = false) { Node = _node; SmallestScore = _smallestScore; _visited = Visited;  }
-	//	internal void Visits() { isVisited = true; }
- //   }
+	// Diagnostics
+	public int nodeVisited = 0;
+	public int edgeVisited = 0;
+	public int traverseCalls = 0;
 
-	protected override List<Node> generate(Node pFrom, Node pTo)
+	// Attributes
+	Node destination { get; set; }
+	int shortestDist = int.MaxValue;
+	List<Node> shortestPath;
+
+	private void init(Node dest)
 	{
-		destination = pTo;
 		_labelDrawer.clearQueueLabels();
 		shortestPath = null;
 		shortestDist = int.MaxValue;
+		destination = dest;
+		callstack = new Stack<Traverse>();
 		nodeVisited = 0;
 		edgeVisited = 0;
 		traverseCalls = 0;
+	}
 
-		//at this point you know the FROM and TO node and you have to write an 
-		//algorithm which finds the path between them
-		//Console.WriteLine("For now I'll just roll a die for a random path!!");
-
-		//int dieRoll = Utils.Random(1, 7);
-		//Console.WriteLine("I rolled a ..." + dieRoll);
-
-		//if (dieRoll == 6)
-		//{
-		//	Console.WriteLine("Yes 'random' path found!!");
-		//	return new List<Node>() { pFrom, pTo };
-		//}
-		//else
-		//{
-		//	Console.WriteLine("Too bad, no path found !!");
-		//	return null;
-		//}
+	protected override List<Node> generate(Node pFrom, Node pTo)
+	{
+		init(pTo);
 		startDiagnostic("Recursive Path Finder");
-		// traversing every node
-		traverse(pFrom, pTo);
-
-		endDiagnostic($"N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls}");
-
+		new Traverse(this, pFrom);
+        endDiagnostic($"N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls}");
 		return shortestPath;
 	}
 
-	Node destination;
-	int shortestDist = int.MaxValue;
-	List<Node> shortestPath;
-	int nodeVisited = 0;
-	int edgeVisited = 0;
-	int traverseCalls = 0;
 
-	private void traverse(Node n, in Node dest, List<Node> path = null, int dist = 0)
+
+	private void traverse(Node n, List<Node> path, int dist = 0)
     {
+		if (destination == null) return;
+
 		// Initialize the List if it is called for the first time
-		traverseCalls++;  if (path == null) path = new List<Node> (); 
-
-
+		traverseCalls++; 
 
 		// If this node is the final node, 
 		if (n == destination && dist < shortestDist)
@@ -84,7 +62,7 @@ class RecursivePathFinder : PathFinder
         }
         else if (n == destination)
         {
-			Console.WriteLine($"[{dist}] Traversing ... : Found Destination! {path.Count + 1}");
+			Console.WriteLine($"[{dist}] Traversing ... : Found Destination! ZZ {path.Count + 1}");
 		}
 
 		// If this node has been visited, then skip this node.
@@ -102,28 +80,75 @@ class RecursivePathFinder : PathFinder
 			// Iterate to every child
 			foreach (Node child in n.connections)
             {
-                if (!path.Contains(child))
+				Console.WriteLine($"[{dist}] Traversing ... : Paths!");
+				path.ForEach(e => Console.Write(e + " ")); Console.WriteLine("");
+
+				if (!path.Contains(child))
                 {
-					traverse(child, dest, path, dist + 1); edgeVisited++;
-					//_labelDrawer.drawConnections(n, child);
+                    _labelDrawer.drawConnections(n, child, dist + 1);
+					new Traverse(this, child, path, dist + 1); edgeVisited++;
                 }
-			}
+            }
 
 			// Remove current node from the traveled path as we need to traverse back
 			path.RemoveAt(path.Count - 1);
 		}
 
-    }
+	}
 
+	internal class Traverse
+	{
+		
+		readonly Node currentNode;
+		readonly List<Node> travelPath;
+		readonly int distance;
+        readonly RecursivePathFinder recpathfinder;
+
+		public Traverse(RecursivePathFinder r, Node n, List<Node> l = null, int i = 0)
+		{
+			currentNode = n;
+			if (l != null) travelPath = new List<Node>(l); else travelPath = new List<Node>();
+			distance = i;
+			recpathfinder = r;
+
+			r.callstack.Push(this);
+
+			//Console.WriteLine("=== Traaverse Func queued! ===");
+			//if (l == null) Console.WriteLine($"= Node: {n} | List: null | Distance: {i}");
+			//else { Console.Write($"= Node: {n} | List: "); travelPath.ForEach(e => Console.Write(e + " ")); Console.WriteLine($"({travelPath.Count}) | Distance: {i}"); }
+		}
+		public void Run(){ recpathfinder.traverse(currentNode, travelPath, distance); }
+
+	}
+
+	int lastRun;
+	Stack<Traverse> callstack = new Stack<Traverse>();
+	public void CallfromStack() { callstack.Pop().Run(); }
+
+	protected override void iterateSteps()
+	{
+		if (lastRun == 0) lastRun = Time.now;
+		if (Time.now - lastRun > 10)
+        {
+            _labelDrawer.clearQueueLabels();
+            lastRun = Time.now;
+			if(callstack.Count > 0) CallfromStack();
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	// for visualization
 	NodeLabelDrawer _labelDrawer;
 	public void SetLabelDrawer(NodeLabelDrawer n)
 	{
 		_labelDrawer = n;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////
 	// for diagnostics
 	Stopwatch sw = new Stopwatch();
 	List<TimeSpan> elapses = new List<TimeSpan>();
+	private static TimeSpan Average(IEnumerable<TimeSpan> spans) => new TimeSpan(Convert.ToInt64(spans.Average(t => t.Ticks)));
 	public void startDiagnostic(string s)
     {
 		Console.WriteLine($"\n>---------------\n/ Start: {s}");
@@ -139,6 +164,6 @@ class RecursivePathFinder : PathFinder
 		Console.WriteLine($"\\ Avg: {Average(elapses)}\n>---------------");
 	}
 
-	private static TimeSpan Average(IEnumerable<TimeSpan> spans) => new TimeSpan(Convert.ToInt64(spans.Average(t => t.Ticks)));
+
 }
 

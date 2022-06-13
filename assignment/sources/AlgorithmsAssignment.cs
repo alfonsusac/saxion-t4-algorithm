@@ -178,6 +178,7 @@ class AlgorithmsAssignment : Game
 
 		//_pathFinder = new SamplePathFinder(_graph);
 		_pathFinder = new RecursivePathFinder(_graph);
+		//new Thread( e=> new RecursivePathFinder(_graph) ).Start();
 
 		//////////////////////////////////////////////////////////////////////////
 		//Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
@@ -205,6 +206,7 @@ class AlgorithmsAssignment : Game
 		_nodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
 		if(_agent is RandomWayPointAgent) (_agent as RandomWayPointAgent).SetLabelDrawer(_nodeLabelDrawer);
 		if(_pathFinder is RecursivePathFinder) (_pathFinder as RecursivePathFinder).SetLabelDrawer(_nodeLabelDrawer);
+		//if(_pathFinder is BreadthFirstPathFinder) (_pathFinder as BreadthFirstPathFinder).SetLabelDrawer(_nodeLabelDrawer);
 
 
 		if (grid != null) AddChild(grid);
