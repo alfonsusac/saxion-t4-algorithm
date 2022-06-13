@@ -177,14 +177,14 @@ class AlgorithmsAssignment : Game
 		//TODO: Comment out the SamplePathFinder, implement a RecursivePathFinder and uncomment it below
 
 		//_pathFinder = new SamplePathFinder(_graph);
-		_pathFinder = new RecursivePathFinder(_graph);
+		//_pathFinder = new RecursivePathFinder(_graph);
 		//new Thread( e=> new RecursivePathFinder(_graph) ).Start();
 
 		//////////////////////////////////////////////////////////////////////////
 		//Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
 		//
 		//TODO: Comment out the RecursivePathFinder above, implement a BreadthFirstPathFinder and uncomment it below
-		//_pathFinder = new BreadthFirstPathFinder(_graph);
+		_pathFinder = new BreadthFirstPathFinder(_graph);
 
 		//TODO: Implement a PathFindingAgent that uses one of your pathfinder implementations (should work with any pathfinder implementation)
 		//_agent = new PathFindingAgent(_graph, _pathFinder);
@@ -206,7 +206,7 @@ class AlgorithmsAssignment : Game
 		_nodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
 		if(_agent is RandomWayPointAgent) (_agent as RandomWayPointAgent).SetLabelDrawer(_nodeLabelDrawer);
 		if(_pathFinder is RecursivePathFinder) (_pathFinder as RecursivePathFinder).SetLabelDrawer(_nodeLabelDrawer);
-		//if(_pathFinder is BreadthFirstPathFinder) (_pathFinder as BreadthFirstPathFinder).SetLabelDrawer(_nodeLabelDrawer);
+		if(_pathFinder is BreadthFirstPathFinder) (_pathFinder as BreadthFirstPathFinder).SetLabelDrawer(_nodeLabelDrawer);
 
 
 		if (grid != null) AddChild(grid);

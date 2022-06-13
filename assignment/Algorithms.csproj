@@ -170,6 +170,7 @@
     <Compile Include="sources\Solution\A2\HighLevelDungeonNodeGraph.cs" />
     <Compile Include="sources\Solution\A2\TiledDungeonView.cs" />
     <Compile Include="sources\Solution\A3\RecursivePathFinder.cs" />
+    <Compile Include="sources\Solution\A3\BreadthFirstPathFinder.cs" />
     <Compile Include="sources\Util\Grid.cs" />
     <Compile Include="sources\Util\NodeLabelDrawer.cs" />
     <Compile Include="sources\Util\RectangleExtensions.cs" />
