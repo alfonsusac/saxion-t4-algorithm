@@ -52,9 +52,10 @@ class NodeLabelDrawer : Canvas
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	/// PathAgent visualization helper methods
-	internal void drawPaths(List<Node> l)
+	internal void drawPaths(List<Node> l, Node m = null)
     {
 		graphics.Clear(Color.Transparent);
+		if (m != null) l.Add(m);
 		if (l == null || l.Count == 0 ) return;
 		Node prevN = null;
 		foreach(Node n in l)
@@ -66,6 +67,7 @@ class NodeLabelDrawer : Canvas
             }
 			prevN = n;
         }
+		if (m != null) l.Remove(m);
     }
 
 	/////////////////////////////////////////////////////////////////////////////////////////

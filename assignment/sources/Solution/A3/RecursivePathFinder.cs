@@ -21,6 +21,10 @@ class RecursivePathFinder : PathFinder
 	List<Node> shortestPath;
 	bool running;
 
+	// [] Visualization
+	// this will enable visualizing the graphs and updating the frame
+	bool visualized = true;
+
 	private void init(Node dest)
 	{
 		_labelDrawer.clearQueueLabels();
@@ -38,9 +42,12 @@ class RecursivePathFinder : PathFinder
 	{
 		init(pTo);
 		startDiagnostic("Recursive Path Finder");
-		new Traverse(this, pFrom);
-		running = true;
-		
+		if (visualized)
+		{
+			running = true;
+			new Traverse(this, pFrom);
+		}
+		else traverse(pFrom, null);
 		return shortestPath;
 	}
 
@@ -51,22 +58,23 @@ class RecursivePathFinder : PathFinder
 		if (destination == null) return;
 
 		// Initialize the List if it is called for the first time
-		traverseCalls++; 
+		traverseCalls++; if(path == null) path = new List<Node>();
+
+		_labelDrawer.drawPaths(path, n);
 
 		// If this node is the final node, 
 		if (n == destination && dist < shortestDist)
         {
 			// then copy path to the global shortestpath
-			shortestDist = dist;
-			shortestPath = new List<Node>(path);
-			shortestPath.Add(n);
-			Console.WriteLine($"[{dist}] Traversing ... : Found Shortest Destination! {shortestPath.Count}");
+			if( dist < shortestDist)
+            {
+				shortestDist = dist;
+				shortestPath = new List<Node>(path);
+				shortestPath.Add(n);
+				//Console.WriteLine($"[{dist}] Traversing ... : Found Shortest Destination! {shortestPath.Count}");
+			}
 			return;
         }
-        else if (n == destination)
-        {
-			Console.WriteLine($"[{dist}] Traversing ... : Found Destination! {path.Count + 1}");
-		}
 
 		// If this node has been visited, then skip this node.
 		// If this node has node children, then skip this node.
@@ -87,8 +95,9 @@ class RecursivePathFinder : PathFinder
 
 				if (!path.Contains(child))
                 {
-					new Traverse(this, child, path, dist + 1); edgeVisited++;
-                }
+					if(visualized) new Traverse(this, child, path, dist + 1); else traverse(child, path, dist + 1);
+					edgeVisited++;
+				}
             }
 
 			// Remove current node from the traveled path as we need to traverse back
@@ -113,8 +122,6 @@ class RecursivePathFinder : PathFinder
 			recpathfinder = r;
 
 			r.callstack.Push(this);
-
-			_labelDrawer.drawPaths(l);
 		}
         public override string ToString()
         {
@@ -133,20 +140,23 @@ class RecursivePathFinder : PathFinder
 
 	protected override void iterateSteps()
 	{
-		if (lastRun == 0) lastRun = Time.now;
-		if (Time.now - lastRun > 10)
+        if (visualized)
         {
-            lastRun = Time.now;
-			if(callstack.Count > 0) CallfromStack();
-			if(running == true && callstack.Count == 0)
-            {
-				endDiagnostic($"N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls}");
-				Console.WriteLine("Recursive Generation Completed!");
-				_lastCalculatedPath = shortestPath;
-				draw();
-				running = false;
-            }
-		}
+			if (lastRun == 0) lastRun = Time.now;
+			if (Time.now - lastRun > 10)
+			{
+				lastRun = Time.now;
+				if(callstack.Count > 0) CallfromStack();
+				if(running == true && callstack.Count == 0)
+				{
+					endDiagnostic($"N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls}");
+					Console.WriteLine("Recursive Generation Completed!");
+					_lastCalculatedPath = shortestPath;
+					draw();
+					running = false;
+				}
+			}
+        }
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
