@@ -82,7 +82,8 @@ class RecursivePathFinder : PathFinder
 
 		// If this node has been visited, then skip this node.
 		// If this node has node children, then skip this node.
-		// if nothing wrong
+		// so
+		// if nothing wrong,  if this node has NOT been visited AND has Childrens,
 		// then traverse through its children
 		if (!path.Contains(n) && n.connections.Count != 0)
         {
