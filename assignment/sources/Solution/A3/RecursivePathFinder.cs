@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 /**
  * An example of a PathFinder implementation which completes the process by rolling a die 
@@ -66,38 +67,47 @@ class RecursivePathFinder : PathFinder
 
 	private void traverse(Node n, in Node dest, List<Node> path = null, int dist = 0)
     {
-		traverseCalls++;
-		if (path == null) path = new List<Node> ();
+		// Initialize the List if it is called for the first time
+		traverseCalls++;  if (path == null) path = new List<Node> (); 
+
+
 
 		// If this node is the final node, 
 		if (n == destination && dist < shortestDist)
         {
-			Console.WriteLine($"[{dist}] Traversing ... : Found Destination!");
 			// then copy path to the global shortestpath
 			shortestDist = dist;
 			shortestPath = new List<Node>(path);
 			shortestPath.Add(n);
+			Console.WriteLine($"[{dist}] Traversing ... : Found Shortest Destination! {shortestPath.Count}");
 			return;
         }
+        else if (n == destination)
+        {
+			Console.WriteLine($"[{dist}] Traversing ... : Found Destination! {path.Count + 1}");
+		}
 
 		// If this node has been visited, then skip this node.
 		// If this node has node children, then skip this node.
 		// so
 		// if nothing wrong,  if this node has NOT been visited AND has Childrens,
 		// then traverse through its children
-		if (!path.Contains(n) && n.connections.Count != 0)
+		//if (!path.Contains(n) && n.connections.Count != 0)
+		if (n.connections.Count != 0)
         {
 			// Add current node to the traveled path
-			path.Add(n);
-			nodeVisited++;
+			path.Add(n); nodeVisited++;
+			_labelDrawer.countVisits(n);
+
 			// Iterate to every child
 			foreach (Node child in n.connections)
             {
-				_labelDrawer.drawConnections(n, child);
-				edgeVisited++;
-				//Console.WriteLine($"[{dist}] Traversing ... {n}: Foreach");
-				traverse(child, dest, path, dist + 1);
-            }
+                if (!path.Contains(child))
+                {
+					traverse(child, dest, path, dist + 1); edgeVisited++;
+					//_labelDrawer.drawConnections(n, child);
+                }
+			}
 
 			// Remove current node from the traveled path as we need to traverse back
 			path.RemoveAt(path.Count - 1);
@@ -113,6 +123,7 @@ class RecursivePathFinder : PathFinder
 
 	// for diagnostics
 	Stopwatch sw = new Stopwatch();
+	List<TimeSpan> elapses = new List<TimeSpan>();
 	public void startDiagnostic(string s)
     {
 		Console.WriteLine($"\n>---------------\n/ Start: {s}");
@@ -123,8 +134,11 @@ class RecursivePathFinder : PathFinder
     {
 		sw.Stop();
 		TimeSpan ts = sw.Elapsed;
-		Console.WriteLine($"\\ End: {sw.Elapsed} ({s})\n>---------------");
+		Console.WriteLine($"\\ End: {ts} ({s})\n>---------------");
+		elapses.Add(ts);
+		Console.WriteLine($"\\ Avg: {Average(elapses)}\n>---------------");
 	}
 
+	private static TimeSpan Average(IEnumerable<TimeSpan> spans) => new TimeSpan(Convert.ToInt64(spans.Average(t => t.Ticks)));
 }
 

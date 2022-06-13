@@ -12,6 +12,7 @@ class NodeLabelDrawer : Canvas
 	private Font _labelFont;
 	private bool _showLabels = true;
 	private bool _smallMode = true;
+
 	private NodeGraph _graph = null;
 	private NodeGraphAgent _agent = null;
 	private RandomWayPointAgent _rwagent = null;
@@ -25,7 +26,7 @@ class NodeLabelDrawer : Canvas
 		Console.WriteLine("* L key to toggle node label display.");
 		Console.WriteLine("-----------------------------------------------------------------------------");
 
-		_labelFont = new Font(SystemFonts.DefaultFont.FontFamily, _smallMode ? pNodeGraph.nodeSize : pNodeGraph.nodeSize * 2);
+		_labelFont = new Font(SystemFonts.DefaultFont.FontFamily, Math.Min(_smallMode ? pNodeGraph.nodeSize : pNodeGraph.nodeSize * 2, 12));
 		_graph = pNodeGraph;
 		_agent = pNodeGraphAgent;
 		_rwagent = _agent as RandomWayPointAgent;
@@ -116,7 +117,22 @@ class NodeLabelDrawer : Canvas
 		if (_showLabels) drawLabels();
 	}
 
-	private int nodeSize = 5;
+	Dictionary<Node, int> visitedCount = new Dictionary<Node, int>();
+	internal void resetCounts()
+    {
+		visitedCount.Clear();
+	}
+
+    internal void countVisits(Node pNode)
+    {
+		if(!visitedCount.ContainsKey(pNode)) visitedCount[pNode] = 0;
+		visitedCount[pNode]++;
+		SizeF size = graphics.MeasureString("" + visitedCount[pNode], _labelFont);
+		graphics.FillRectangle(Brushes.White, pNode.location.X, pNode.location.Y - size.Height / 2 - 20, size.Width, size.Height);
+		graphics.DrawString("" + visitedCount[pNode], _labelFont, Brushes.Blue, pNode.location.X, pNode.location.Y - size.Height / 2 - 20);
+	}
+
+    private int nodeSize = 5;
 	public void setNodeSize(int i)
     {
 		nodeSize = i + 2;
