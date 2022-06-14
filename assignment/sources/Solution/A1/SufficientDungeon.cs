@@ -50,6 +50,7 @@ class SufficientDungeon : Dungeon
     protected override void generate(int pMinimumRoomSize)
     {
         Console.WriteLine($"size {size.Width} | {size.Height} and MinimumRoomSize {pMinimumRoomSize} ");
+        
         //Stack for the BSP
         Queue<Room> room_queue = new Queue<Room>();
 
@@ -60,8 +61,9 @@ class SufficientDungeon : Dungeon
         // Lists of corners
         Dictionary<Point,bool> corner_exist = new Dictionary<Point,bool>();
         List<Point> corner_list = new List<Point>();
-        // a stack consisteing of the tuple for the wall. Which is described with corner1 and corner2, 
-        Stack<wall> room_with_door = new Stack<wall>();
+        
+        // a stack Consisting of the tuple for the wall. Which is described with corner1 and corner2, 
+        Stack<wall> bspWalls = new Stack<wall>();
         List<Room> room_list = new List<Room>();
 
 
@@ -123,7 +125,7 @@ class SufficientDungeon : Dungeon
                     corner2 = new Point(x1 + w1 - 1, y2);
 
                 }
-                room_with_door.Push(new wall(corner1,corner2) );
+                bspWalls.Push(new wall(corner1,corner2) );
 
                 try
                 {
@@ -138,19 +140,11 @@ class SufficientDungeon : Dungeon
                 }
                 catch (Exception e) { }
 
-                //doors.Add(new Door(corner1));
-                //doors.Add(new Door(corner2));
-
                 room_1 = newRoom(x1, y1, w1, h1);
-                //rooms.Add(room_1);
                 room_2 = newRoom(x2, y2, w2, h2);
-                //rooms.Add(room_2);
                 
                 room_queue.Enqueue(room_1);
                 room_queue.Enqueue(room_2);
-
-                //draw();
-                //Console.ReadKey();
 
             }
             else
@@ -161,10 +155,10 @@ class SufficientDungeon : Dungeon
         }
 
         // Adding doors
-        while(room_with_door.Count > 0)
+        while (bspWalls.Count > 0)
         {
             int x = 0, y = 0;
-            wall w = room_with_door.Pop();
+            wall w = bspWalls.Pop();
             do
             {
                 x = random.Next(w.p1.X, w.p2.X);
@@ -173,15 +167,7 @@ class SufficientDungeon : Dungeon
 
             doors.Add(new Door(new Point(x, y)));
         }
-        //foreach (Room room in room_list)
-        //{
-        //    rooms.Add(room);
-        //    //draw();
-        //}
         Console.WriteLine($"{room_list.Count} rooms generated");
-        //TODO: Implement sufficient dungeon generation
-        //rooms.Add(new Room(new Rectangle(0, 0, size.Width, size.Height)));
-
     }
 
     
@@ -190,21 +176,6 @@ class SufficientDungeon : Dungeon
     {
         return new Room(new Rectangle(x, y, width, height));
     }
-    public static bool flip(bool i)
-    {
-        return i ? i = false : i = true;
-    }
-    public static void debugWaitForKey()
-    {
-        bool pressed = false;
-        while (!pressed)
-        {
-            if (Input.GetKey(Key.SPACE))
-                pressed = true;
-        }
-    }
-    
-
 }
 
 
