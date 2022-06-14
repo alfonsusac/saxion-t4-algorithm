@@ -73,14 +73,14 @@ abstract class NodeGraph : Canvas
 	 */
 	public void Generate()
 	{
-		System.Console.WriteLine(this.GetType().Name + ".Generate: Generating graph...");
+		Console.WriteLine(this.GetType().Name + ".Generate: Generating graph...");
 
 		//always remove all nodes before generating the graph, as it might have been generated previously
 		nodes.Clear();
 		generate();
 		draw();
 
-		System.Console.WriteLine(this.GetType().Name + ".Generate: Graph generated.");
+		Console.WriteLine(this.GetType().Name + ".Generate: Graph generated.");
 	}
 
 	protected abstract void generate();
