@@ -5,60 +5,39 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-class BreadthFirstPathFinder : PathFinder
+class BreadthFirstPathFinder : RecursivePathFinder
 {
 
 	public BreadthFirstPathFinder(NodeGraph pGraph) : base(pGraph) { }
 
-	// Diagnostics
-	public int nodeVisited = 0;
-	public int edgeVisited = 0;
-	public int traverseCalls = 0;
+	// Data Structure necessary for BFS
+	Dictionary<Node, Node> prevNode = new Dictionary<Node, Node>();
 
-	// Attributes
-	Node destination { get; set; }
-	bool running;
+    // Overriding parent class
+    protected override void initialize(Node dest)
+    {
+        base.initialize(dest);
+		functionForCallingFromList = CallfromStack;
 
-	// [] Visualization
-	// this will enable visualizing the graphs and updating the frame
-	bool visualized = true;
-
-	private void init(Node dest)
-	{
-		_labelDrawer.clearQueueLabels();
-		prevNode = new Dictionary<Node, Node>();
-		destination = dest;
-		callstack = new Queue<Step>();
-		nodeVisited = 0;
-		edgeVisited = 0;
-		traverseCalls = 0;
-		running = false;
 	}
 
-	protected override List<Node> generate(Node pFrom, Node pTo)
-	{
-		init(pTo);
-		startDiagnostic("BFS Path Finder");
-		if (visualized)
-		{
-			running = true;
-			prevNode[pFrom] = null;
-			new Step(this, pFrom);
-			return null;
-		}
-		else
-		{
-			traverse(pFrom, null);
-			return generateShortestPath(pTo);
-		}
+    protected override void processWithVisual(Node start)
+    {
+		setRunning(true);
+		prevNode[start] = null;
+		new Step(this, start);
+	}
+	protected override void processWithoutVisual(Node start)
+    {
+		traverse(start, null);
+		shortestPath = generateShortestPath(destination);
 	}
 
-	Dictionary<Node, Node> prevNode;
-
-	private void traverse(Node curr, List<Node> path = null, int dist = 0)
+	// Overriding traverse method
+	protected override void traverse(Node curr, List<Node> path = null, int dist = 0)
 	{
 		if (destination == null) return;
-		traverseCalls++;
+		diagnostic.traverseCalls++;
 
 		// Initialize the List if it is called for the first time
 		if (path == null) path = new List<Node>();
@@ -67,7 +46,7 @@ class BreadthFirstPathFinder : PathFinder
 		if (curr.connections.Count != 0)
 		{
 			// Add current node to the traveled path
-			path.Add(curr); nodeVisited++; _labelDrawer.countVisits(curr);
+			path.Add(curr); diagnostic.nodeVisited++; _labelDrawer.countVisits(curr);
 
 			// Iterate to every child
 			foreach (Node child in curr.connections)
@@ -81,10 +60,11 @@ class BreadthFirstPathFinder : PathFinder
 			path.RemoveAt(path.Count - 1);
 		}
 	}
-	private void traverseThrough(Node child, List<Node> path, int dist)
+	
+	protected override void traverseThrough(Node child, List<Node> path, int dist)
 	{
 		if (visualized) new Step(this, child, path, dist + 1); else traverse(child, path, dist + 1);
-		edgeVisited++;
+		diagnostic.edgeVisited++;
 	}
 
     private List<Node> generateShortestPath(Node dest)
@@ -104,9 +84,11 @@ class BreadthFirstPathFinder : PathFinder
 		return path;
     }
 
+	new protected Queue<Step> callstack = new Queue<Step>();
+	new protected void CallfromStack() { callstack.Dequeue().Run(); }
+
 	internal class Step
 	{
-
 		readonly Node currentNode;
 		readonly List<Node> travelPath;
 		readonly int distance;
@@ -121,6 +103,8 @@ class BreadthFirstPathFinder : PathFinder
 
 			r.callstack.Enqueue(this);
 		}
+
+
 		public override string ToString()
 		{
 			string s;
@@ -132,56 +116,35 @@ class BreadthFirstPathFinder : PathFinder
 
 	}
 
-	int lastRun;
-	Queue<Step> callstack = new Queue<Step>();
-	public void CallfromStack() { callstack.Dequeue().Run(); }
-
-	//////////////////////////////////////////////////////////////////////////////
-	// for visualization
-	static NodeLabelDrawer _labelDrawer;
-	public void SetLabelDrawer(NodeLabelDrawer n) { _labelDrawer = n; }
-
 	protected override void iterateSteps()
 	{
+		// Only do this if its visualzied.
 		if (visualized)
 		{
+			// Delay the visualization
 			if (lastRun == 0) lastRun = Time.now;
 			if (Time.now - lastRun > 10)
 			{
 				lastRun = Time.now;
+
+				// If there is something in the stack? then call it.
 				if (callstack.Count > 0) CallfromStack();
-				if (running == true && callstack.Count == 0)
+
+				// If the Recursion is finally done
+				if (IsRunning && callstack.Count == 0)
 				{
-					endDiagnostic($"N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls}");
-					Console.WriteLine("BFS Generation Completed!");
-					_lastCalculatedPath = generateShortestPath(destination);
+					diagnostic.endDiagnostic($"N = {diagnostic.nodeVisited}, E = {diagnostic.edgeVisited}, T = {diagnostic.traverseCalls}");
+					Console.WriteLine("Recursive Generation Completed!");
+
+					// apply the last calculated path AND draw it
+					_lastCalculatedPath = shortestPath;
 					draw();
-					running = false;
+
+					// turn the machine off!
+					setRunning(false);
 				}
 			}
 		}
 	}
-
-	//////////////////////////////////////////////////////////////////////////////
-	// for diagnostics
-	Stopwatch sw = new Stopwatch();
-	List<TimeSpan> elapses = new List<TimeSpan>();
-	private static TimeSpan Average(IEnumerable<TimeSpan> spans) => new TimeSpan(Convert.ToInt64(spans.Average(t => t.Ticks)));
-	public void startDiagnostic(string s)
-	{
-		Console.WriteLine($"\n>---------------\n/ Start: {s}");
-		sw.Restart();
-	}
-
-	public void endDiagnostic(string s = "")
-	{
-		sw.Stop();
-		TimeSpan ts = sw.Elapsed;
-		Console.WriteLine($"\\ End: {ts} ({s})\n>---------------");
-		elapses.Add(ts);
-		Console.WriteLine($"\\ Avg: {Average(elapses)}\n>---------------");
-	}
-
-
 }
 
