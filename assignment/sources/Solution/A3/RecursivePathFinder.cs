@@ -11,28 +11,30 @@ class RecursivePathFinder : PathFinder
 	public RecursivePathFinder(NodeGraph pGraph) : base(pGraph) { }
 
 	// Diagnostics
-	BasicDiagnostic diagnostic;
+	protected BasicDiagnostic diagnostic;
 
-	// Attributes
-	Node destination { get; set; }
-	int shortestDist = int.MaxValue;
-	List<Node> shortestPath;
+	// Attributes to be inherited
+	protected Node destination { get; set; }
+	protected int shortestDist = int.MaxValue;
+	protected List<Node> shortestPath;
+
+	// private Attribute
 	bool running;
+	public bool IsRunning { get { return running; } }
 
 	// [] Visualization
 	// this will enable visualizing the graphs and updating the frame
 	// !! This will be run for every frame !!
-	bool visualized = true;
+	protected readonly bool visualized = true;
 
 	// These are required since the recursion now happens for every frame
-	private void init(Node dest)
+	protected virtual void init(Node dest)
 	{
 		// Diagnostics
 		diagnostic = new BasicDiagnostic();
 
 		// necessary to reset
-		shortestPath = null;
-		shortestDist = int.MaxValue;
+		initForRecursion();
 		destination = dest;
 		callstack = new Stack<Traverse>();
 		running = false;
@@ -40,6 +42,15 @@ class RecursivePathFinder : PathFinder
 		// Graphic Stuff
 		_labelDrawer.clearQueueLabels();
 	}
+
+	void initForRecursion()
+    {
+		if (this is RecursivePathFinder)
+        {
+			shortestPath = null;
+			shortestDist = int.MaxValue;
+		}
+    }
 
 	protected override List<Node> generate(Node pFrom, Node pTo)
 	{
@@ -146,11 +157,8 @@ class RecursivePathFinder : PathFinder
 	//////////////////////////////////////////////////////////////////////////////
 	// for visualization
 	int lastRun;
-	Stack<Traverse> callstack = new Stack<Traverse>();
-	public void CallfromStack() { callstack.Pop().Run(); }
-
-	static NodeLabelDrawer _labelDrawer;
-	public void SetLabelDrawer(NodeLabelDrawer n){_labelDrawer = n;	}
+	protected Stack<Traverse> callstack = new Stack<Traverse>();
+	protected void CallfromStack() { callstack.Pop().Run(); }
 
 	protected override void iterateSteps()
 	{
@@ -184,8 +192,12 @@ class RecursivePathFinder : PathFinder
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
-	// for diagnostics
+	// HELPER METHOD
+	internal void setRunning(bool status) { running = status; }
 
+
+	//////////////////////////////////////////////////////////////////////////////
+	// for diagnostics
 
 	internal class BasicDiagnostic
     {
