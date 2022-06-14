@@ -11,27 +11,45 @@ class BreadthFirstPathFinder : RecursivePathFinder
 	public BreadthFirstPathFinder(NodeGraph pGraph) : base(pGraph) { }
 
 	// Data Structure necessary for BFS
-	Dictionary<Node, Node> prevNode = new Dictionary<Node, Node>();
+	Dictionary<Node, Node> prevNode;
+
+	Node lastCurrentNode;
 
     // Overriding parent class
-    protected override void initialize(Node dest)
+    protected override void initialize(Node start, Node dest)
     {
-        base.initialize(dest);
+        base.initialize(start, dest);
+		callqueue = new Queue<Step>();
+		prevNode = new Dictionary<Node, Node>();
 		functionForCallingFromList = CallfromStack;
-
-	}
-
-    protected override void processWithVisual(Node start)
-    {
-		setRunning(true);
+		functionCollection = callqueue;
 		prevNode[start] = null;
-		new Step(this, start);
+		lastCurrentNode = null;
 	}
-	protected override void processWithoutVisual(Node start)
-    {
-		traverse(start, null);
+
+	protected override void generateWithoutVisual(Node start)
+	{
+		if(lastCurrentNode != start)
+			traverse(start, null);
+
 		shortestPath = generateShortestPath(destination);
 	}
+
+	protected override void generateWithVisual(Node start)
+    {
+		if(lastCurrentNode != start)
+			new Step(this, start);
+
+		// call returnShortestPath() on the frame where the search is finished.
+	}
+
+	protected override void returnShortestPath()
+	{
+		shortestPath = generateShortestPath(destination);
+		base.returnShortestPath();
+	}
+
+
 
 	// Overriding traverse method
 	protected override void traverse(Node curr, List<Node> path = null, int dist = 0)
@@ -43,11 +61,10 @@ class BreadthFirstPathFinder : RecursivePathFinder
 		if (path == null) path = new List<Node>();
 		_labelDrawer.drawPaths(path, curr);
 
-		if (curr.connections.Count != 0)
-		{
-			// Add current node to the traveled path
-			path.Add(curr); diagnostic.nodeVisited++; _labelDrawer.countVisits(curr);
+		// Add current node to the traveled path
+		path.Add(curr); diagnostic.nodeVisited++; _labelDrawer.countVisits(curr);
 
+		if (curr.connections.Count != 0)
 			// Iterate to every child
 			foreach (Node child in curr.connections)
 				if (!prevNode.ContainsKey(child))
@@ -56,18 +73,26 @@ class BreadthFirstPathFinder : RecursivePathFinder
 					traverseThrough(child, path, dist + 1);
 				}
 
-			// Remove current node from the traveled path as we need to traverse back
-			path.RemoveAt(path.Count - 1);
+		if (!visualized)
+		{
+			if (callqueue.Count > 0)
+				CallfromStack();
+            else
+            {
+				returnShortestPath();
+			}
 		}
 	}
 	
 	protected override void traverseThrough(Node child, List<Node> path, int dist)
 	{
-		if (visualized) new Step(this, child, path, dist + 1); else traverse(child, path, dist + 1);
+		new Step(this, child, path, dist + 1);
 		diagnostic.edgeVisited++;
 	}
 
-    private List<Node> generateShortestPath(Node dest)
+
+
+	private List<Node> generateShortestPath(Node dest)
     {
 		Node curr = dest;
 		List<Node> path = new List<Node>();
@@ -75,76 +100,34 @@ class BreadthFirstPathFinder : RecursivePathFinder
 
 		while (prevNode.ContainsKey(curr))
         {
-			Console.WriteLine($"Curr {curr} <- Prev {prevNode[curr]}");
+			//Console.WriteLine($"Curr {curr} <- Prev {prevNode[curr]}");
 			curr = prevNode[curr];
 			if (curr == null) break;
 			path.Insert(0, curr);
 		}
 
+		lastCurrentNode = path[0];
 		return path;
     }
 
-	new protected Queue<Step> callstack = new Queue<Step>();
-	new protected void CallfromStack() { callstack.Dequeue().Run(); }
 
-	internal class Step
+
+	protected Queue<Step> callqueue;
+	protected override void CallfromStack() { callqueue.Dequeue().Run(); }
+
+
+
+	internal class Step : TraverseRecursively
 	{
-		readonly Node currentNode;
-		readonly List<Node> travelPath;
-		readonly int distance;
-		readonly BreadthFirstPathFinder recpathfinder;
-
 		public Step(BreadthFirstPathFinder r, Node n, List<Node> l = null, int i = 0)
+			: base(r,n,l,i){ }
+
+		public override void Add(TraverseRecursively t)
 		{
-			currentNode = n;
-			if (l != null) travelPath = new List<Node>(l); else travelPath = new List<Node>();
-			distance = i;
-			recpathfinder = r;
-
-			r.callstack.Enqueue(this);
-		}
-
-
-		public override string ToString()
-		{
-			string s;
-			if (travelPath == null) s = $"= Node: {currentNode} | List: null | Distance: {distance}";
-			else { s = $"= Node: {currentNode} | List: "; travelPath.ForEach(e => s += e + " "); s += $"({travelPath.Count}) | Distance: {distance}"; }
-			return s;
-		}
-		public void Run() { recpathfinder.traverse(currentNode, travelPath, distance); }
-
-	}
-
-	protected override void iterateSteps()
-	{
-		// Only do this if its visualzied.
-		if (visualized)
-		{
-			// Delay the visualization
-			if (lastRun == 0) lastRun = Time.now;
-			if (Time.now - lastRun > 10)
-			{
-				lastRun = Time.now;
-
-				// If there is something in the stack? then call it.
-				if (callstack.Count > 0) CallfromStack();
-
-				// If the Recursion is finally done
-				if (IsRunning && callstack.Count == 0)
-				{
-					diagnostic.endDiagnostic($"N = {diagnostic.nodeVisited}, E = {diagnostic.edgeVisited}, T = {diagnostic.traverseCalls}");
-					Console.WriteLine("Recursive Generation Completed!");
-
-					// apply the last calculated path AND draw it
-					_lastCalculatedPath = shortestPath;
-					draw();
-
-					// turn the machine off!
-					setRunning(false);
-				}
-			}
+			(pf as BreadthFirstPathFinder).callqueue.Enqueue(t as Step);
 		}
 	}
+
+
 }
 
