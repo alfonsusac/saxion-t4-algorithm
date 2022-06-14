@@ -4,7 +4,7 @@ using System.Drawing;
 using System;
 using System.Collections.Generic;
 
-class GoodDungeon : Dungeon
+class GoodDungeon : SufficientDungeon
 {
 
     //Random random = new Random(15512);
@@ -31,7 +31,6 @@ class GoodDungeon : Dungeon
     static readonly bool HORIZONTAL = false;
 
     EasyDraw canvas;
-
     // Wrapper Class for straight walls
     internal class wall
     {
@@ -199,15 +198,6 @@ class GoodDungeon : Dungeon
 
         addDoors();
 
-        //for(int i = 0; i < size.Width; i++)
-        //{
-        //    for(int j = 0; j < size.Height; j++)
-        //    {
-        //        if(DoorNotPlaceable[i,j])
-        //        doors.Add(new Door(new Point(i, j)));
-        //    }
-        //}
-
         paintRoomsbyDoors(debug:false);
 
         Console.WriteLine($"{rooms.Count} rooms generated");
@@ -268,6 +258,7 @@ class GoodDungeon : Dungeon
         if (!AllHasWalls) addDoors();
     }
 
+
     void paintRoomsbyDoors(bool debug = false)
     {
         // - Fill background
@@ -295,8 +286,9 @@ class GoodDungeon : Dungeon
             drawDoor(door, Pens.LightGray);
     }
 
+    ///////////////////////////////////////////////////
+    // FEATURE: delete smallest and largest room
     bool isRoomsSorted = false;
-
     public void deleteSmallestAndLargestRoom(bool multiple = true)
     {
         // This is if we just want to remove one of the largest/smallest
@@ -340,6 +332,8 @@ class GoodDungeon : Dungeon
         }
     }
 
+    ///////////////////////////////////////////////////
+    // HELPER METHOD: remove room from dungeon
     public void removeRoom(Room r, bool _removeMissingDoor = false)
     {
         Console.WriteLine($"Room with {doorsOfRoom[r].Count} doors are removed");
@@ -366,6 +360,8 @@ class GoodDungeon : Dungeon
         rooms.Remove(r);
     }
 
+    ///////////////////////////////////////////////////
+    // HELPER METHOD: add doors and finalize to dungeon
     void addDoorsToDungeon(Door d)
     {
         // - add doors to the master list
@@ -380,6 +376,8 @@ class GoodDungeon : Dungeon
 
     }
 
+    ///////////////////////////////////////////////////
+    // HELPER METHOD: add room and finalize to dungeon
     protected void addRoomToDungeon(Room r)
     {
         // - add room to the master list
@@ -397,12 +395,6 @@ class GoodDungeon : Dungeon
 
         // - reset the sorted labael
         isRoomsSorted = false;
-    }
-
-    public static Room newRoom(int x, int y, int width, int height)
-    {
-        Room temp = new Room(new Rectangle(x, y, width, height));
-        return temp;
     }
 }
 
