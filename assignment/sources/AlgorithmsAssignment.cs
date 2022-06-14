@@ -22,8 +22,6 @@ class AlgorithmsAssignment : Game
 	NodeGraph _graph = null;
 	TiledView _tiledView = null;
 	NodeGraphAgent _agent = null;
-	NodeGraphAgent _agent2 = null;
-	NodeGraphAgent _agent3 = null;
 
 	//Required for assignment 3
 	PathFinder _pathFinder = null;
@@ -213,6 +211,7 @@ class AlgorithmsAssignment : Game
         // !!!! Important Toggles: !!!!
         Dungeon.autoDrawAfterGenerate = false;
 		NodeGraph.doNotDraw = true;
+		NodeGraphAgent.debug = false;
 		NodeLabelDrawer.disableDrawing = false;
 
 		if (grid != null)		AddChild(grid);
