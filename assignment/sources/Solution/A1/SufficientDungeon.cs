@@ -8,29 +8,11 @@ class SufficientDungeon : Dungeon
 {
     public SufficientDungeon(Size pSize) : base(pSize)
     {
-        canvas = new EasyDraw(pSize.Width, pSize.Height);
-
-        canvas.texture.Bind();
-        GL.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
-        GL.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-        canvas.texture.Unbind();
-
-        AddChild(canvas);
-
-        canvas.Fill(Color.Red);
-        canvas.Stroke(Color.Red);
-        
     }
-
-    // local variables:
-    // Size size;
-    // List<Room> rooms;
-    // List<Door> doors;
 
     static readonly bool VERTICAL = true;
     static readonly bool HORIZONTAL = false;
 
-    EasyDraw canvas;
     class wall
     {
         public Point p1 { get; set; }
@@ -64,8 +46,6 @@ class SufficientDungeon : Dungeon
         
         // a stack Consisting of the tuple for the wall. Which is described with corner1 and corner2, 
         Stack<wall> bspWalls = new Stack<wall>();
-        List<Room> room_list = new List<Room>();
-
 
         //direction
         while (room_queue.Count > 0)
@@ -126,6 +106,7 @@ class SufficientDungeon : Dungeon
 
                 }
                 bspWalls.Push(new wall(corner1,corner2) );
+                //corner_exist[corner1] = true;
 
                 try
                 {
@@ -167,11 +148,12 @@ class SufficientDungeon : Dungeon
 
             doors.Add(new Door(new Point(x, y)));
         }
-        Console.WriteLine($"{room_list.Count} rooms generated");
+        Console.WriteLine($"{rooms.Count} rooms generated");
     }
 
-    
 
+    ///////////////////////////////////////////////////
+    // HELPER METHOD: new room
     public static Room newRoom(int x, int y, int width, int height)
     {
         return new Room(new Rectangle(x, y, width, height));
