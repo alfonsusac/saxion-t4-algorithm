@@ -27,11 +27,19 @@ class AlgorithmsAssignment : Game
 	PathFinder _pathFinder = null;
 
 	//common settings
-	private const int SCALE = 70;       //TODO: experiment with changing this
+	private const int SCALE = 50;       //TODO: experiment with changing this
 	private const int MIN_ROOM_SIZE = 3;	//TODO: use this setting in your dungeon generator
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{
+
+		// !!!! Important Toggles: !!!!
+		Dungeon.autoDrawAfterGenerate = false;
+		NodeGraph.doNotDraw = true;
+		NodeGraphAgent.debug = false;
+		NodeLabelDrawer.disableDrawing = false;
+		NodeLabelDrawer.disableLabelDrawing = false;
+
 		/////////////////////////////////////////////////////////////////////////////////////////
 		///	BASE SETUP - FEEL FREE TO SKIP
 
@@ -175,14 +183,14 @@ class AlgorithmsAssignment : Game
         //TODO: Comment out the SamplePathFinder, implement a RecursivePathFinder and uncomment it below
 
         //_pathFinder = new SamplePathFinder(_graph);
-        _pathFinder = new RecursivePathFinder(_graph);
+	//	_pathFinder = new RecursivePathFinder(_graph);
 		//new Thread( e=> new RecursivePathFinder(_graph) ).Start();
 
 		//////////////////////////////////////////////////////////////////////////
 		//Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
 		//
 		//TODO: Comment out the RecursivePathFinder above, implement a BreadthFirstPathFinder and uncomment it below
-		//_pathFinder = new BreadthFirstPathFinder(_graph);
+		_pathFinder = new BreadthFirstPathFinder(_graph);
 
 		//TODO: Implement a PathFindingAgent that uses one of your pathfinder implementations (should work with any pathfinder implementation)
 		_agent = new PathFindingAgent(_graph, _pathFinder);
@@ -208,11 +216,7 @@ class AlgorithmsAssignment : Game
         if (_agent != null)			_agent.SetLabelDrawer(_nodeLabelDrawer);
 		if (_pathFinder != null)	_pathFinder.SetLabelDrawer(_nodeLabelDrawer);
 
-        // !!!! Important Toggles: !!!!
-        Dungeon.autoDrawAfterGenerate = false;
-		NodeGraph.doNotDraw = true;
-		NodeGraphAgent.debug = false;
-		NodeLabelDrawer.disableDrawing = false;
+
 
 		if (grid != null)		AddChild(grid);
 		if (_dungeon != null)	AddChild(_dungeon);
