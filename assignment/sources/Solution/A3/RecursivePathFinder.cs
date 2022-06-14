@@ -11,9 +11,7 @@ class RecursivePathFinder : PathFinder
 	public RecursivePathFinder(NodeGraph pGraph) : base(pGraph) { }
 
 	// Diagnostics
-	public int nodeVisited = 0;
-	public int edgeVisited = 0;
-	public int traverseCalls = 0;
+	BasicDiagnostic diagnostic;
 
 	// Attributes
 	Node destination { get; set; }
@@ -23,31 +21,44 @@ class RecursivePathFinder : PathFinder
 
 	// [] Visualization
 	// this will enable visualizing the graphs and updating the frame
+	// !! This will be run for every frame !!
 	bool visualized = true;
 
+	// These are required since the recursion now happens for every frame
 	private void init(Node dest)
 	{
-		_labelDrawer.clearQueueLabels();
+		// Diagnostics
+		diagnostic = new BasicDiagnostic();
+
+		// necessary to reset
 		shortestPath = null;
 		shortestDist = int.MaxValue;
 		destination = dest;
 		callstack = new Stack<Traverse>();
-		nodeVisited = 0;
-		edgeVisited = 0;
-		traverseCalls = 0;
 		running = false;
+
+		// Graphic Stuff
+		_labelDrawer.clearQueueLabels();
 	}
 
 	protected override List<Node> generate(Node pFrom, Node pTo)
 	{
+
+		// Initialization
 		init(pTo);
-		startDiagnostic("Recursive Path Finder");
+
+		// Start diagnosting
+		diagnostic.startDiagnostic("Recursive Path Finder");
+
 		if (visualized)
 		{
 			running = true;
 			new Traverse(this, pFrom);
 		}
 		else traverse(pFrom, null);
+
+		// if visualized, return null first. Then render later
+		// uf not visualize, then shortestPath list would be populated.
 		return shortestPath;
 	}
 
@@ -55,8 +66,9 @@ class RecursivePathFinder : PathFinder
 
 	private void traverse(Node n, List<Node> path, int dist = 0)
     {
+		// Deny entry if destination is null
 		if (destination == null) return;
-		traverseCalls++;
+		diagnostic.traverseCalls++;
 
 		// Initialize the List if it is called for the first time
 		if (path == null) path = new List<Node>();
@@ -66,7 +78,9 @@ class RecursivePathFinder : PathFinder
 		// If this node is the final node, 
 		if (n == destination)
         {
+			// If the distance to this node is the shortest node.
 			if( dist < shortestDist)
+
 				// then copy path to the global shortestpath
 				markAsShortest(n, dist, path);
 			return;
@@ -75,9 +89,9 @@ class RecursivePathFinder : PathFinder
 		if (n.connections.Count != 0)
         {
 			// Add current node to the traveled path
-			path.Add(n); nodeVisited++; _labelDrawer.countVisits(n);
+			path.Add(n); diagnostic.nodeVisited++; _labelDrawer.countVisits(n);
 
-            // Iterate to every child
+            // Iterate to every unvisted child
             foreach (Node child in n.connections)
 				if (!path.Contains(child))
 					traverseThrough(child, path, dist + 1);
@@ -98,7 +112,7 @@ class RecursivePathFinder : PathFinder
 	private void traverseThrough(Node child, List<Node> path, int dist)
     {
 		if (visualized) new Traverse(this, child, path, dist + 1); else traverse(child, path, dist + 1);
-		edgeVisited++;
+		diagnostic.edgeVisited++;
 	}
 
     internal class Traverse
@@ -129,30 +143,40 @@ class RecursivePathFinder : PathFinder
 
 	}
 
+	//////////////////////////////////////////////////////////////////////////////
+	// for visualization
 	int lastRun;
 	Stack<Traverse> callstack = new Stack<Traverse>();
 	public void CallfromStack() { callstack.Pop().Run(); }
 
-	//////////////////////////////////////////////////////////////////////////////
-	// for visualization
 	static NodeLabelDrawer _labelDrawer;
 	public void SetLabelDrawer(NodeLabelDrawer n){_labelDrawer = n;	}
 
 	protected override void iterateSteps()
 	{
+		// Only do this if its visualzied.
 		if (visualized)
 		{
+			// Delay the visualization
 			if (lastRun == 0) lastRun = Time.now;
 			if (Time.now - lastRun > 10)
 			{
 				lastRun = Time.now;
+
+				// If there is something in the stack? then call it.
 				if (callstack.Count > 0) CallfromStack();
+
+				// If the Recursion is finally done
 				if (running == true && callstack.Count == 0)
 				{
-					endDiagnostic($"N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls}");
+					diagnostic.endDiagnostic($"N = {diagnostic.nodeVisited}, E = {diagnostic.edgeVisited}, T = {diagnostic.traverseCalls}");
 					Console.WriteLine("Recursive Generation Completed!");
+
+					// apply the last calculated path AND draw it
 					_lastCalculatedPath = shortestPath;
 					draw();
+
+					// turn the machine off!
 					running = false;
 				}
 			}
@@ -161,24 +185,42 @@ class RecursivePathFinder : PathFinder
 
 	//////////////////////////////////////////////////////////////////////////////
 	// for diagnostics
-	Stopwatch sw = new Stopwatch();
-	List<TimeSpan> elapses = new List<TimeSpan>();
-	private static TimeSpan Average(IEnumerable<TimeSpan> spans) => new TimeSpan(Convert.ToInt64(spans.Average(t => t.Ticks)));
-	public void startDiagnostic(string s)
-    {
-		Console.WriteLine($"\n>---------------\n/ Start: {s}");
-		sw.Restart();
-    }
 
-	public void endDiagnostic(string s = "")
+
+	internal class BasicDiagnostic
     {
-		sw.Stop();
-		TimeSpan ts = sw.Elapsed;
-		Console.WriteLine($"\\ End: {ts} ({s})\n>---------------");
-		elapses.Add(ts);
-		Console.WriteLine($"\\ Avg: {Average(elapses)}\n>---------------");
+		// Timing Attributes
+		Stopwatch sw = new Stopwatch();
+		List<TimeSpan> elapses = new List<TimeSpan>();
+		private static TimeSpan Average(IEnumerable<TimeSpan> spans) => new TimeSpan(Convert.ToInt64(spans.Average(t => t.Ticks)));
+
+		// Initialization
+		public int nodeVisited = 0;
+		public int edgeVisited = 0;
+		public int traverseCalls = 0;
+
+		public BasicDiagnostic()
+        {
+			nodeVisited = 0;
+			edgeVisited = 0;
+			traverseCalls = 0;
+		}
+
+		// Public Method
+		public void startDiagnostic(string s)
+		{
+			Console.WriteLine($"\n>---------------\n/ Start: {s}");
+			sw.Restart();
+		}
+
+		public void endDiagnostic(string s = "")
+		{
+			sw.Stop();
+			TimeSpan ts = sw.Elapsed;
+			Console.WriteLine($"\\ End: {ts} (N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls})\n>---------------");
+			elapses.Add(ts);
+			Console.WriteLine($"\\ Avg: {Average(elapses)}\n>---------------");
+		}
 	}
-
-
 }
 
