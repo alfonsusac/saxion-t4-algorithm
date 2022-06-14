@@ -25,7 +25,7 @@ class RecursivePathFinder : PathFinder
 	// [] Visualization
 	// this will enable visualizing the graphs and updating the frame
 	// !! This will be run for every frame !!
-	protected readonly bool visualized = false;
+	public readonly bool visualized = false;
 
 	// These are required since the recursion now happens for every frame
 	protected virtual void initialize(Node start, Node dest)

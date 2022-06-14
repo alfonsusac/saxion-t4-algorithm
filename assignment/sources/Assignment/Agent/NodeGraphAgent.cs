@@ -103,7 +103,6 @@ abstract class NodeGraphAgent : AnimationSprite
 	protected virtual void jumpToNode(Node pNode)
 	{
 		SetXY(pNode.location.X, pNode.location.Y);
-		//Console.WriteLine($"Agent of {x} {y} jump to node {pNode}");
 	}
 
 	float __x;

@@ -8,52 +8,14 @@ using System.Text;
  * Very simple example of a nodegraphagent that walks directly to the node you clicked on,
  * ignoring walls, connections etc.
  */
-class RandomWayPointAgent : NodeGraphAgent
+class RandomWayPointAgent : SampleNodeGraphAgent
 {
-	//Current target to move towards
-	private Node _target = null;
-	private Queue<Node> _targetsqueue = new Queue<Node>();
-	public Queue<Node> TargetsQueue { get { return _targetsqueue; } }
-	private Node currentNode;
+	public RandomWayPointAgent(NodeGraph pNodeGraph) : base(pNodeGraph)
+	{ }
 
-	public RandomWayPointAgent(NodeGraph pNodeGraph, float _pscale = 1f) : base(pNodeGraph, _pscale)
+	protected override void onNodeClickHandler(Node pNode)
 	{
-		SetOrigin(width / 2, height / 2);
 
-		HighLevelDungeonNodeGraph nodegraph = pNodeGraph as HighLevelDungeonNodeGraph;
-
-		//Console.WriteLine($"Node Graph Dimension {nodegraph.}, {pNodeGraph.height}");
-
-		//position ourselves on a random node
-		if (pNodeGraph.nodes.Count > 0)
-		{
-			JumpToNode(pNodeGraph.nodes[Utils.Random(0, pNodeGraph.nodes.Count)]);
-		}
-
-		//listen to nodeclicksxxxxxxxxxx
-		pNodeGraph.OnNodeLeftClicked += onNodeClickHandler;
-		pNodeGraph.OnNodeRightClicked += moveAgentonRightClick;
-	}
-
-	protected virtual void moveAgentonRightClick(Node pNode)
-    {
-		JumpToNode(pNode);
-	}
-
-	public void JumpToNode(Node pNode)
-    {
-		currentNode = pNode;
-		SetXY(pNode.location.X, pNode.location.Y);
-	}
-
-	// The Update Function is dedicated to running the queue of the set of movement generated in onNodeClickHandler
-	//  all the set of movement is precalculated in onNodeClickHandler which then the queue will be run in the Update() function.
-
-	bool isMoving;
-	public bool IsMoving { get { return isMoving; } }
-
-	protected virtual void onNodeClickHandler(Node pNode)
-	{
 		if (isMoving) return;
 		// On Click on the nodes
 		foreach (Node n in currentNode.connections)
@@ -66,8 +28,6 @@ class RandomWayPointAgent : NodeGraphAgent
 				return;
 			}
 		}
-
-		bool Found = false;
 		Node traverse = currentNode;
 
 		// This Stack is for keeping track the path traveled.
@@ -83,7 +43,7 @@ class RandomWayPointAgent : NodeGraphAgent
 
 
 
-		while (!Found)
+		while ( true )
 		{
 			// Pop the stack
 			P($"");
@@ -107,7 +67,6 @@ class RandomWayPointAgent : NodeGraphAgent
 			if (curr == pNode)
 			{
 				P($"\nNode Found!!!\n");
-				Found = true;
 				isMoving = true;
 				_labelDrawer.drawQueueLabels();
 				break;
@@ -175,59 +134,10 @@ class RandomWayPointAgent : NodeGraphAgent
                 else
                 {
 					Console.WriteLine($"\n.\n.\n.\n\nNode Not Found After a long search??? ");
-					Found = true;
 					isMoving = true;
 					break;
 				}
 			}
 		}
 	}
-
-
-
-
-	protected override void Update()
-	{
-		// FOR EVERY FRAME
-
-
-		// Check if currently there is no queue
-		if (_targetsqueue.Count == 0 && _target == null)
-			return;
-
-		// If there is a queue in the _targetsqueue, then peek and set that as the target.
-		if (_target == null) currentNode = _target = _targetsqueue.Peek();
-
-		// the Agent will start moving to _target while checking the queue and the target.
-
-		// Once done moving,
-		if (moveTowardsNode(_target))
-		{
-			//Console.WriteLine("Moving");
-			// set the current node to the current node. For this case the variable is still useless
-			// also dequeue the current Node
-			_targetsqueue.Dequeue();
-
-			_labelDrawer.drawQueueLabels();
-
-			if (_targetsqueue.Count > 0)
-            {
-				// if there are more nodes queueing, then dequeue them as the next target
-				//_labelDrawer.clearConnectionLabel(_target, _targetsqueue.Peek());
-				_labelDrawer.markNode(_target);
-				currentNode = _target = _targetsqueue.Peek();
-            }
-            else
-            {
-				// else, set it to null to stop the agent.
-				_target = null;
-				isMoving = false;
-				_labelDrawer.clearQueueLabels();
-			}
-		}
-	}
-
-
-
-
 }

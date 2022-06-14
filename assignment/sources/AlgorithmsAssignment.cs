@@ -160,7 +160,7 @@ class AlgorithmsAssignment : Game
 		//
 		//TODO: Comment out the OnGraphWayPointAgent above, implement a RandomWayPointAgent class and uncomment it below
 
-		//_agent = new RandomWayPointAgent(_graph, 2f);
+		_agent = new RandomWayPointAgent(_graph);
         //_agent2 = new RandomWayPointAgent(_graph, -1.0f);
         //_agent3 = new RandomWayPointAgent(_graph, -2f);
 
@@ -193,7 +193,7 @@ class AlgorithmsAssignment : Game
 		_pathFinder = new BreadthFirstPathFinder(_graph);
 
 		//TODO: Implement a PathFindingAgent that uses one of your pathfinder implementations (should work with any pathfinder implementation)
-		_agent = new PathFindingAgent(_graph, _pathFinder);
+		//_agent = new PathFindingAgent(_graph, _pathFinder);
 
 		/////////////////////////////////////////////////
 		//Assignment 3.2 Good & 3.3 Excellent (Optional)
