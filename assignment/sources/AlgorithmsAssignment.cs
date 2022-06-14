@@ -30,7 +30,7 @@ class AlgorithmsAssignment : Game
 
 	//common settings
 	private const int SCALE = 70;       //TODO: experiment with changing this
-	private const int MIN_ROOM_SIZE = 4;	//TODO: use this setting in your dungeon generator
+	private const int MIN_ROOM_SIZE = 3;	//TODO: use this setting in your dungeon generator
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{
@@ -187,7 +187,7 @@ class AlgorithmsAssignment : Game
 		//_pathFinder = new BreadthFirstPathFinder(_graph);
 
 		//TODO: Implement a PathFindingAgent that uses one of your pathfinder implementations (should work with any pathfinder implementation)
-		//_agent = new PathFindingAgent(_graph, _pathFinder);
+		_agent = new PathFindingAgent(_graph, _pathFinder);
 
 		/////////////////////////////////////////////////
 		//Assignment 3.2 Good & 3.3 Excellent (Optional)
@@ -202,28 +202,26 @@ class AlgorithmsAssignment : Game
 		/// REQUIRED BLOCK OF CODE TO ADD ALL OBJECTS YOU CREATED TO THE SCREEN IN THE CORRECT ORDER
 		/// LOOK BUT DON'T TOUCH :)
 
-		// !!!! Important Toggles: !!!!
-		Dungeon.autoDrawAfterGenerate = false;
-		NodeGraph.doNotDraw = false;
 
 
-
+		// THE LABEL DRAWER
         NodeLabelDrawer _nodeLabelDrawer = new NodeLabelDrawer(_graph, _agent);
         _nodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
-        if (_agent is RandomWayPointAgent) (_agent as RandomWayPointAgent).SetLabelDrawer(_nodeLabelDrawer);
-        if (_pathFinder is RecursivePathFinder) (_pathFinder as RecursivePathFinder).SetLabelDrawer(_nodeLabelDrawer);
-        //if(_pathFinder is BreadthFirstPathFinder) (_pathFinder as BreadthFirstPathFinder).SetLabelDrawer(_nodeLabelDrawer);
+        if (_agent != null)			_agent.SetLabelDrawer(_nodeLabelDrawer);
+		if (_pathFinder != null)	_pathFinder.SetLabelDrawer(_nodeLabelDrawer);
 
+        // !!!! Important Toggles: !!!!
+        Dungeon.autoDrawAfterGenerate = false;
+		NodeGraph.doNotDraw = true;
+		NodeLabelDrawer.disableDrawing = false;
 
-        if (grid != null) AddChild(grid);
-		if (_dungeon != null) AddChild(_dungeon);
+		if (grid != null)		AddChild(grid);
+		if (_dungeon != null)	AddChild(_dungeon);
         if (_tiledView != null) AddChild(_tiledView);
-		if (_graph != null) AddChild(_graph);
-        if (_pathFinder != null) AddChild(_pathFinder);             //pathfinder on top of that
-        if (_graph != null) AddChild(_nodeLabelDrawer); //node label display on top of that
-        if (_agent != null) AddChild(_agent);                       //and last but not least the agent itself
-		if (_agent2 != null) AddChild(_agent2);                       //and last but not least the agent itself
-		if (_agent3 != null) AddChild(_agent3);                       //and last but not least the agent itself
+		if (_graph != null)		AddChild(_graph);
+        if (_pathFinder != null)AddChild(_pathFinder);             //pathfinder on top of that
+        if (_graph != null)		AddChild(_nodeLabelDrawer); //node label display on top of that
+        if (_agent != null)		AddChild(_agent);                       //and last but not least the agent itself
 
 		/////////////////////////////////////////////////
 		//The end!

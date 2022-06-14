@@ -10,7 +10,6 @@ using System.Text;
  */
 class RandomWayPointAgent : NodeGraphAgent
 {
-	private NodeLabelDrawer _labelDrawer;
 	//Current target to move towards
 	private Node _target = null;
 	private Queue<Node> _targetsqueue = new Queue<Node>();
@@ -254,8 +253,5 @@ class RandomWayPointAgent : NodeGraphAgent
 		if (debug) Console.WriteLine($"{_P()}{s}\n{_P()}          [ {string.Join(sep, l)} ]");
 	}
 
-	public void SetLabelDrawer(NodeLabelDrawer n)
-    {
-		_labelDrawer = n;
-	}
+
 }

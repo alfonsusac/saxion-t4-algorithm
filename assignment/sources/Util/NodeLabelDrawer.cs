@@ -18,7 +18,7 @@ class NodeLabelDrawer : Canvas
 	private NodeGraphAgent _agent = null;
 	private RandomWayPointAgent _rwagent = null;
 
-	public bool disableDrawing = false;
+	public static bool disableDrawing = false;
 
 	public NodeLabelDrawer(NodeGraph pNodeGraph, NodeGraphAgent pNodeGraphAgent) : base(pNodeGraph.width, pNodeGraph.height)
 	{

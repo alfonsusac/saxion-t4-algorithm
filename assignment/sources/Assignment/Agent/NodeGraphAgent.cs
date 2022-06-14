@@ -118,5 +118,11 @@ abstract class NodeGraphAgent : AnimationSprite
 		__y = _y;
     }
 
+	protected NodeLabelDrawer _labelDrawer;
+
+	public void SetLabelDrawer(NodeLabelDrawer n)
+	{
+		_labelDrawer = n;
+	}
 }
 
