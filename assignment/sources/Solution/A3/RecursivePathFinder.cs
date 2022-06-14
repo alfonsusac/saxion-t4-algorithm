@@ -25,50 +25,67 @@ class RecursivePathFinder : PathFinder
 	// [] Visualization
 	// this will enable visualizing the graphs and updating the frame
 	// !! This will be run for every frame !!
-	protected readonly bool visualized = true;
+	protected readonly bool visualized = false;
 
 	// These are required since the recursion now happens for every frame
-	protected virtual void initialize(Node dest)
+	protected virtual void initialize(Node start, Node dest)
 	{
 		// Diagnostics
 		diagnostic = new BasicDiagnostic();
 
-		// necessary to reset
+		// necessary to reset: for encapsulation
+		initializeForRecursion();
+
+		// necessary to reset: initialization
 		destination = dest;
 		shortestPath = null;
 		shortestDist = int.MaxValue;
-		callstack = new Stack<TraverseRecursively>();
 		running = false;
-		initializeVisualization();
-		functionForCallingFromList = CallfromStack;
 
-		// Graphic Stuff
+		// necessary to reset: visualization
+		initializeVisualization();
+
+		// Resetting Graphic Stuff
 		_labelDrawer.clearQueueLabels();
 	}
+
+	protected virtual void initializeForRecursion()
+    {
+		if(this is RecursivePathFinder)
+        {
+			functionForCallingFromList = CallfromStack;
+			callstack = new Stack<TraverseRecursively>();
+			functionCollection = callstack;
+		}
+	}
+
 
 	protected override List<Node> generate(Node pFrom, Node pTo)
 	{
 
 		// Initialization
-		initialize(pTo);
+		initialize(pFrom, pTo);
 
 		// Start diagnosting
-		diagnostic.startDiagnostic("Recursive Path Finder");
+		diagnostic.startDiagnostic($"{GetType()}");
 
-		if (visualized)	processWithVisual(pFrom);
-		else processWithoutVisual(pFrom);
+		if (visualized)
+		{
+			running = true;
+			generateWithVisual(pFrom);
+		}
+		else generateWithoutVisual(pFrom);
 
 		// if visualized, return null first. Then render later
 		// if not visualize, then shortestPath list would be populated.
 		return shortestPath;
 	}
 
-	protected virtual void processWithVisual(Node start)
+	protected virtual void generateWithVisual(Node start)
     {
-		running = true;
 		new TraverseRecursively(this, start);
 	}
-	protected virtual void processWithoutVisual(Node start)
+	protected virtual void generateWithoutVisual(Node start)
     {
 		traverse(start, null);
     }
@@ -92,26 +109,27 @@ class RecursivePathFinder : PathFinder
 
 				// then copy path to the global shortestpath
 				markAsShortest(n, dist, path);
+
 			return;
         }
 
+		path.Add(n); diagnostic.nodeVisited++; _labelDrawer.countVisits(n);
+
 		if (n.connections.Count != 0)
         {
-			// Add current node to the traveled path
-			path.Add(n); diagnostic.nodeVisited++; _labelDrawer.countVisits(n);
+            // Add current node to the traveled path FOR VISUALIZATION
+            
 
             // Iterate to every unvisted child
             foreach (Node child in n.connections)
 				if (!path.Contains(child))
 					traverseThrough(child, path, dist + 1);
 
-			// Remove current node from the traveled path as we need to traverse back
-			path.RemoveAt(path.Count - 1);
 		}
 
 	}
 
-	protected virtual void markAsShortest(Node n, int dist, List<Node> path)
+	protected void markAsShortest(Node n, int dist, List<Node> path)
     {
 		//Console.WriteLine($"[{dist}] Traversing ... : Found Shortest Destination! {shortestPath.Count}");
 		shortestDist = dist;
@@ -133,17 +151,27 @@ class RecursivePathFinder : PathFinder
 		readonly Node currentNode;
 		readonly List<Node> travelPath;
 		readonly int distance;
-        readonly RecursivePathFinder recpathfinder;
+		readonly protected RecursivePathFinder pf;
 
 		public TraverseRecursively(RecursivePathFinder r, Node n, List<Node> l = null, int i = 0)
 		{
+			pf = r;
+			Add(this);
+
 			currentNode = n;
 			if (l != null) travelPath = new List<Node>(l); else travelPath = new List<Node>();
 			distance = i;
-			recpathfinder = r;
 
-			r.callstack.Push(this);
 		}
+		public virtual void Add(TraverseRecursively t)
+        {
+			pf.callstack.Push(t);
+        }
+
+        public virtual void Run(){
+			pf.traverse(currentNode, travelPath, distance); 
+		}
+
         public override string ToString()
         {
 			string s;
@@ -151,7 +179,6 @@ class RecursivePathFinder : PathFinder
 			else { s = $"= Node: {currentNode} | List: "; travelPath.ForEach(e => s += e + " "); s += $"({travelPath.Count}) | Distance: {distance}"; }
 			return s;
         }
-        public void Run(){ recpathfinder.traverse(currentNode, travelPath, distance); }
 
 	}
 
@@ -159,13 +186,14 @@ class RecursivePathFinder : PathFinder
 	// for visualization
 	protected int lastRun;
 	protected Stack<TraverseRecursively> callstack = new Stack<TraverseRecursively>();
+	protected IEnumerable<TraverseRecursively> functionCollection;
 
 	protected void initializeVisualization()
     {
 		functionForCallingFromList = CallfromStack;
 	}
 
-	protected void CallfromStack() {
+	protected virtual void CallfromStack() {
 		Console.WriteLine("CallfromStack");
 		callstack.Pop().Run(); 
 	}
@@ -179,28 +207,39 @@ class RecursivePathFinder : PathFinder
 		{
 			// Delay the visualization
 			if (lastRun == 0) lastRun = Time.now;
-			if (Time.now - lastRun > 10)
+			if (Time.now - lastRun > 1 && functionCollection != null)
 			{
 				lastRun = Time.now;
 
 				// If there is something in the stack? then call it.
-				if (callstack.Count > 0) functionForCallingFromList();
+				if (funcCollectionCount() > 0) 
+					functionForCallingFromList();
 
 				// If the Recursion is finally done
-				if (running == true && callstack.Count == 0)
+				if (running == true && funcCollectionCount() == 0)
 				{
 					diagnostic.endDiagnostic($"N = {diagnostic.nodeVisited}, E = {diagnostic.edgeVisited}, T = {diagnostic.traverseCalls}");
 					Console.WriteLine("Recursive Generation Completed!");
+					Console.WriteLine(funcCollectionCount());
 
 					// apply the last calculated path AND draw it
-					_lastCalculatedPath = shortestPath;
-					draw();
+					returnShortestPath();
 
 					// turn the machine off!
 					running = false;
 				}
 			}
 		}
+	}
+	protected virtual int funcCollectionCount()
+    {
+		return functionCollection.Count();
+    }
+
+	protected virtual void returnShortestPath()
+    {
+		_lastCalculatedPath = shortestPath;
+		draw();
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -222,6 +261,7 @@ class RecursivePathFinder : PathFinder
 		public int nodeVisited = 0;
 		public int edgeVisited = 0;
 		public int traverseCalls = 0;
+		public bool disabled = true;
 
 		public BasicDiagnostic()
         {
@@ -233,17 +273,23 @@ class RecursivePathFinder : PathFinder
 		// Public Method
 		public void startDiagnostic(string s)
 		{
-			Console.WriteLine($"\n>---------------\n/ Start: {s}");
-			sw.Restart();
+            if (!disabled)
+            {
+				Console.WriteLine($"\n>---------------\n/ Start: {s}");
+				sw.Restart();
+            }
 		}
 
 		public void endDiagnostic(string s = "")
 		{
-			sw.Stop();
-			TimeSpan ts = sw.Elapsed;
-			Console.WriteLine($"\\ End: {ts} (N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls})\n>---------------");
-			elapses.Add(ts);
-			Console.WriteLine($"\\ Avg: {Average(elapses)}\n>---------------");
+            if (!disabled)
+            {
+				sw.Stop();
+				TimeSpan ts = sw.Elapsed;
+				Console.WriteLine($"\\ End: {ts} (N = {nodeVisited}, E = {edgeVisited}, T = {traverseCalls})\n>---------------");
+				elapses.Add(ts);
+				Console.WriteLine($"\\ Avg: {Average(elapses)}\n>---------------");
+            }
 		}
 	}
 }
