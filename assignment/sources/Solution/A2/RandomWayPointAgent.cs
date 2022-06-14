@@ -227,31 +227,7 @@ class RandomWayPointAgent : NodeGraphAgent
 		}
 	}
 
-	private Stack<Node> _stack;
-	const bool debug = false;
-	void I(Stack<Node> a)
-	{
-		_stack = a;
-	}
-	string _P()
-	{
-		string t = "";
-		for (int j = 0; j < _stack.Count; j++)
-			t += "| ";
-		return t;
-	}
-	void P(string s)
-	{
-		if (debug) Console.WriteLine(_P() + s);
-	}
-	void P(string s, IEnumerable<Node> l)
-	{
-		P(s, l, " ");
-	}
-	void P(string s, IEnumerable<Node> l, string sep)
-	{
-		if (debug) Console.WriteLine($"{_P()}{s}\n{_P()}          [ {string.Join(sep, l)} ]");
-	}
+
 
 
 }

@@ -1,6 +1,7 @@
 ﻿using GXPEngine;
 using GXPEngine.OpenGL;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 
@@ -123,6 +124,35 @@ abstract class NodeGraphAgent : AnimationSprite
 	public void SetLabelDrawer(NodeLabelDrawer n)
 	{
 		_labelDrawer = n;
+	}
+
+
+	/// Debug stuff
+	/// 
+	static private Stack<Node> _stack;
+	static public bool debug = false;
+	static protected void I(Stack<Node> a)
+	{
+		_stack = a;
+	}
+	static protected string _P()
+	{
+		string t = "";
+		for (int j = 0; j < _stack.Count; j++)
+			t += "| ";
+		return t;
+	}
+	static protected void P(string s)
+	{
+		if (debug) Console.WriteLine(_P() + s);
+	}
+	static protected void P(string s, IEnumerable<Node> l)
+	{
+		P(s, l, " ");
+	}
+	static protected void P(string s, IEnumerable<Node> l, string sep)
+	{
+		if (debug) Console.WriteLine($"{_P()}{s}\n{_P()}          [ {string.Join(sep, l)} ]");
 	}
 }
 
