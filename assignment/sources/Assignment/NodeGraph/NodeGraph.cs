@@ -35,7 +35,7 @@ abstract class NodeGraph : Canvas
 	private Brush _defaultNodeColor = Brushes.CornflowerBlue;
 	private Brush _highlightedNodeColor = Brushes.Cyan;
 
-	private bool doNotDraw = true;
+	private bool doNotDraw = false;
 
 	/** 
 	 * Construct a nodegraph with the given screen dimensions, eg 800x600
