@@ -106,20 +106,19 @@ class SufficientDungeon : Dungeon
 
                 }
                 bspWalls.Push(new wall(corner1,corner2) );
-                //corner_exist[corner1] = true;
 
                 try
                 {
                     corner_exist.Add(corner1, true);
                     corner_list.Add(corner1);
                 }
-                catch (Exception e) { }
+                catch (Exception) { }
                 try
                 {
                     corner_exist.Add(corner2, true);
                     corner_list.Add(corner2);
                 }
-                catch (Exception e) { }
+                catch (Exception) { }
 
                 room_1 = newRoom(x1, y1, w1, h1);
                 room_2 = newRoom(x2, y2, w2, h2);
