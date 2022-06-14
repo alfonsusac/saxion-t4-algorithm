@@ -19,6 +19,7 @@ class NodeLabelDrawer : Canvas
 	private RandomWayPointAgent _rwagent = null;
 
 	public static bool disableDrawing = false;
+	public static bool disableLabelDrawing = true;
 
 	public NodeLabelDrawer(NodeGraph pNodeGraph, NodeGraphAgent pNodeGraphAgent) : base(pNodeGraph.width, pNodeGraph.height)
 	{
@@ -167,7 +168,7 @@ class NodeLabelDrawer : Canvas
 
 	protected virtual void drawLabels()
 	{
-		if (!disableDrawing)
+		if (!disableLabelDrawing)
 			foreach (Node node in _graph.nodes) if (_showLabels) drawNode(node, Brushes.White);
     }
 
