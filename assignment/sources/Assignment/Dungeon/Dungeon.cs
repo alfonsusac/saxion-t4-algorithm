@@ -26,7 +26,8 @@ abstract class Dungeon : Canvas
 
 	//Set this to false if you want to do all drawing yourself from the generate method.
 	//This might be handy while debugging your own algorithm.
-	protected bool autoDrawAfterGenerate = false;
+	//protected bool autoDrawAfterGenerate = false;
+	public static bool autoDrawAfterGenerate = false;
 
 	//The colors for the walls and doors
 	//TODO:try changing 255 to 128 to see where the room boundaries are...

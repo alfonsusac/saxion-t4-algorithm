@@ -30,7 +30,7 @@ class AlgorithmsAssignment : Game
 
 	//common settings
 	private const int SCALE = 70;       //TODO: experiment with changing this
-	private const int MIN_ROOM_SIZE = 3;	//TODO: use this setting in your dungeon generator
+	private const int MIN_ROOM_SIZE = 4;	//TODO: use this setting in your dungeon generator
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{
@@ -154,37 +154,37 @@ class AlgorithmsAssignment : Game
 		//
 		//TODO: Comment out the OnGraphWayPointAgent above, implement a RandomWayPointAgent class and uncomment it below
 
-		_agent = new RandomWayPointAgent(_graph, 2f);
-		//_agent2 = new RandomWayPointAgent(_graph, -1.0f);
-		//_agent3 = new RandomWayPointAgent(_graph, -2f);
+		//_agent = new RandomWayPointAgent(_graph, 2f);
+        //_agent2 = new RandomWayPointAgent(_graph, -1.0f);
+        //_agent3 = new RandomWayPointAgent(_graph, -2f);
 
-		//////////////////////////////////////////////////////////////
-		//Assignment 2.3 Excellent (Optional) LowLevelDungeonNodeGraph
-		//
-		//TODO: Comment out the HighLevelDungeonNodeGraph above, and implement the LowLevelDungeonNodeGraph 
+        //////////////////////////////////////////////////////////////
+        //Assignment 2.3 Excellent (Optional) LowLevelDungeonNodeGraph
+        //
+        //TODO: Comment out the HighLevelDungeonNodeGraph above, and implement the LowLevelDungeonNodeGraph 
 
-		/////////////////////////////////////////////////////////////////////////////////////////
-		/// ASSIGNMENT 3 : PathFinding and PathFindingAgents
-		///							
-		/// SKIP THIS BLOCK UNTIL YOU'VE FINISHED ASSIGNMENT 2 AND ASKED FOR TEACHER FEEDBACK !
+        /////////////////////////////////////////////////////////////////////////////////////////
+        /// ASSIGNMENT 3 : PathFinding and PathFindingAgents
+        ///							
+        /// SKIP THIS BLOCK UNTIL YOU'VE FINISHED ASSIGNMENT 2 AND ASKED FOR TEACHER FEEDBACK !
 
-		//////////////////////////////////////////////////////////////////////////
-		//Assignment 3.1 Sufficient (Mandatory) - Recursive Pathfinding
-		//
-		//TODO: Study assignment 3.1 on blackboard
-		//TODO: Study the PathFinder class
-		//TODO: Study the SamplePathFinder class and try it out
-		//TODO: Comment out the SamplePathFinder, implement a RecursivePathFinder and uncomment it below
+        //////////////////////////////////////////////////////////////////////////
+        //Assignment 3.1 Sufficient (Mandatory) - Recursive Pathfinding
+        //
+        //TODO: Study assignment 3.1 on blackboard
+        //TODO: Study the PathFinder class
+        //TODO: Study the SamplePathFinder class and try it out
+        //TODO: Comment out the SamplePathFinder, implement a RecursivePathFinder and uncomment it below
 
-		//_pathFinder = new SamplePathFinder(_graph);
-		//_pathFinder = new RecursivePathFinder(_graph);
+        //_pathFinder = new SamplePathFinder(_graph);
+        _pathFinder = new RecursivePathFinder(_graph);
 		//new Thread( e=> new RecursivePathFinder(_graph) ).Start();
 
 		//////////////////////////////////////////////////////////////////////////
 		//Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
 		//
 		//TODO: Comment out the RecursivePathFinder above, implement a BreadthFirstPathFinder and uncomment it below
-		_pathFinder = new BreadthFirstPathFinder(_graph);
+		//_pathFinder = new BreadthFirstPathFinder(_graph);
 
 		//TODO: Implement a PathFindingAgent that uses one of your pathfinder implementations (should work with any pathfinder implementation)
 		//_agent = new PathFindingAgent(_graph, _pathFinder);
@@ -202,20 +202,26 @@ class AlgorithmsAssignment : Game
 		/// REQUIRED BLOCK OF CODE TO ADD ALL OBJECTS YOU CREATED TO THE SCREEN IN THE CORRECT ORDER
 		/// LOOK BUT DON'T TOUCH :)
 
-		NodeLabelDrawer _nodeLabelDrawer = new NodeLabelDrawer(_graph, _agent);
-		_nodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
-		if(_agent is RandomWayPointAgent) (_agent as RandomWayPointAgent).SetLabelDrawer(_nodeLabelDrawer);
-		if(_pathFinder is RecursivePathFinder) (_pathFinder as RecursivePathFinder).SetLabelDrawer(_nodeLabelDrawer);
-		if(_pathFinder is BreadthFirstPathFinder) (_pathFinder as BreadthFirstPathFinder).SetLabelDrawer(_nodeLabelDrawer);
+		// !!!! Important Toggles: !!!!
+		Dungeon.autoDrawAfterGenerate = false;
+		NodeGraph.doNotDraw = false;
 
 
-		if (grid != null) AddChild(grid);
+
+        NodeLabelDrawer _nodeLabelDrawer = new NodeLabelDrawer(_graph, _agent);
+        _nodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
+        if (_agent is RandomWayPointAgent) (_agent as RandomWayPointAgent).SetLabelDrawer(_nodeLabelDrawer);
+        if (_pathFinder is RecursivePathFinder) (_pathFinder as RecursivePathFinder).SetLabelDrawer(_nodeLabelDrawer);
+        //if(_pathFinder is BreadthFirstPathFinder) (_pathFinder as BreadthFirstPathFinder).SetLabelDrawer(_nodeLabelDrawer);
+
+
+        if (grid != null) AddChild(grid);
 		if (_dungeon != null) AddChild(_dungeon);
         if (_tiledView != null) AddChild(_tiledView);
 		if (_graph != null) AddChild(_graph);
-        if (_pathFinder != null) AddChild(_pathFinder);				//pathfinder on top of that
-		if (_graph != null) AddChild(_nodeLabelDrawer);	//node label display on top of that
-		if (_agent != null) AddChild(_agent);                       //and last but not least the agent itself
+        if (_pathFinder != null) AddChild(_pathFinder);             //pathfinder on top of that
+        if (_graph != null) AddChild(_nodeLabelDrawer); //node label display on top of that
+        if (_agent != null) AddChild(_agent);                       //and last but not least the agent itself
 		if (_agent2 != null) AddChild(_agent2);                       //and last but not least the agent itself
 		if (_agent3 != null) AddChild(_agent3);                       //and last but not least the agent itself
 
