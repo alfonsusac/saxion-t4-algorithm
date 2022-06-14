@@ -28,54 +28,52 @@ class RecursivePathFinder : PathFinder
 	protected readonly bool visualized = true;
 
 	// These are required since the recursion now happens for every frame
-	protected virtual void init(Node dest)
+	protected virtual void initialize(Node dest)
 	{
 		// Diagnostics
 		diagnostic = new BasicDiagnostic();
 
 		// necessary to reset
-		initForRecursion();
 		destination = dest;
-		callstack = new Stack<Traverse>();
+		shortestPath = null;
+		shortestDist = int.MaxValue;
+		callstack = new Stack<TraverseRecursively>();
 		running = false;
+		initializeVisualization();
+		functionForCallingFromList = CallfromStack;
 
 		// Graphic Stuff
 		_labelDrawer.clearQueueLabels();
 	}
 
-	void initForRecursion()
-    {
-		if (this is RecursivePathFinder)
-        {
-			shortestPath = null;
-			shortestDist = int.MaxValue;
-		}
-    }
-
 	protected override List<Node> generate(Node pFrom, Node pTo)
 	{
 
 		// Initialization
-		init(pTo);
+		initialize(pTo);
 
 		// Start diagnosting
 		diagnostic.startDiagnostic("Recursive Path Finder");
 
-		if (visualized)
-		{
-			running = true;
-			new Traverse(this, pFrom);
-		}
-		else traverse(pFrom, null);
+		if (visualized)	processWithVisual(pFrom);
+		else processWithoutVisual(pFrom);
 
 		// if visualized, return null first. Then render later
-		// uf not visualize, then shortestPath list would be populated.
+		// if not visualize, then shortestPath list would be populated.
 		return shortestPath;
 	}
 
+	protected virtual void processWithVisual(Node start)
+    {
+		running = true;
+		new TraverseRecursively(this, start);
+	}
+	protected virtual void processWithoutVisual(Node start)
+    {
+		traverse(start, null);
+    }
 
-
-	private void traverse(Node n, List<Node> path, int dist = 0)
+	protected virtual void traverse(Node n, List<Node> path, int dist = 0)
     {
 		// Deny entry if destination is null
 		if (destination == null) return;
@@ -113,20 +111,23 @@ class RecursivePathFinder : PathFinder
 
 	}
 
-    private void markAsShortest(Node n, int dist, List<Node> path)
+	protected virtual void markAsShortest(Node n, int dist, List<Node> path)
     {
 		//Console.WriteLine($"[{dist}] Traversing ... : Found Shortest Destination! {shortestPath.Count}");
 		shortestDist = dist;
 		shortestPath = new List<Node>(path);
 		shortestPath.Add(n);
     }
-	private void traverseThrough(Node child, List<Node> path, int dist)
+
+
+	protected virtual void traverseThrough(Node child, List<Node> path, int dist)
     {
-		if (visualized) new Traverse(this, child, path, dist + 1); else traverse(child, path, dist + 1);
+		if (visualized) new TraverseRecursively(this, child, path, dist + 1); else traverse(child, path, dist + 1);
 		diagnostic.edgeVisited++;
 	}
 
-    internal class Traverse
+
+    internal class TraverseRecursively
 	{
 		
 		readonly Node currentNode;
@@ -134,7 +135,7 @@ class RecursivePathFinder : PathFinder
 		readonly int distance;
         readonly RecursivePathFinder recpathfinder;
 
-		public Traverse(RecursivePathFinder r, Node n, List<Node> l = null, int i = 0)
+		public TraverseRecursively(RecursivePathFinder r, Node n, List<Node> l = null, int i = 0)
 		{
 			currentNode = n;
 			if (l != null) travelPath = new List<Node>(l); else travelPath = new List<Node>();
@@ -156,9 +157,20 @@ class RecursivePathFinder : PathFinder
 
 	//////////////////////////////////////////////////////////////////////////////
 	// for visualization
-	int lastRun;
-	protected Stack<Traverse> callstack = new Stack<Traverse>();
-	protected void CallfromStack() { callstack.Pop().Run(); }
+	protected int lastRun;
+	protected Stack<TraverseRecursively> callstack = new Stack<TraverseRecursively>();
+
+	protected void initializeVisualization()
+    {
+		functionForCallingFromList = CallfromStack;
+	}
+
+	protected void CallfromStack() {
+		Console.WriteLine("CallfromStack");
+		callstack.Pop().Run(); 
+	}
+
+	protected Action functionForCallingFromList;
 
 	protected override void iterateSteps()
 	{
@@ -172,7 +184,7 @@ class RecursivePathFinder : PathFinder
 				lastRun = Time.now;
 
 				// If there is something in the stack? then call it.
-				if (callstack.Count > 0) CallfromStack();
+				if (callstack.Count > 0) functionForCallingFromList();
 
 				// If the Recursion is finally done
 				if (running == true && callstack.Count == 0)
