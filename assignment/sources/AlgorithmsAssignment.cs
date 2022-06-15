@@ -27,12 +27,12 @@ class AlgorithmsAssignment : Game
 	PathFinder _pathFinder = null;
 
 	//common settings
-	private const int SCALE = 20;       //TODO: experiment with changing this
-	private const int MIN_ROOM_SIZE = 3;	//TODO: use this setting in your dungeon generator
+	private const int SCALE = 68;       //TODO: experiment with changing this
+	private const int MIN_ROOM_SIZE = 2;	//TODO: use this setting in your dungeon generator
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{
-
+		System.Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n--------------------------------------");
 		// !!!! Important Toggles: !!!!
 		Dungeon.autoDrawAfterGenerate = false;
 		NodeGraph.doNotDraw = true;
@@ -160,7 +160,7 @@ class AlgorithmsAssignment : Game
 		//
 		//TODO: Comment out the OnGraphWayPointAgent above, implement a RandomWayPointAgent class and uncomment it below
 
-		_agent = new RandomWayPointAgent(_graph);
+		//_agent = new RandomWayPointAgent(_graph);
         //_agent2 = new RandomWayPointAgent(_graph, -1.0f);
         //_agent3 = new RandomWayPointAgent(_graph, -2f);
 
@@ -183,17 +183,17 @@ class AlgorithmsAssignment : Game
         //TODO: Comment out the SamplePathFinder, implement a RecursivePathFinder and uncomment it below
 
         //_pathFinder = new SamplePathFinder(_graph);
-	//	_pathFinder = new RecursivePathFinder(_graph);
+		_pathFinder = new RecursivePathFinder(_graph, true);
 		//new Thread( e=> new RecursivePathFinder(_graph) ).Start();
 
 		//////////////////////////////////////////////////////////////////////////
 		//Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
 		//
 		//TODO: Comment out the RecursivePathFinder above, implement a BreadthFirstPathFinder and uncomment it below
-		_pathFinder = new BreadthFirstPathFinder(_graph);
+	//	_pathFinder = new BreadthFirstPathFinder(_graph, true);
 
 		//TODO: Implement a PathFindingAgent that uses one of your pathfinder implementations (should work with any pathfinder implementation)
-	//	_agent = new PathFindingAgent(_graph, (RecursivePathFinder)_pathFinder);
+		_agent = new PathFindingAgent(_graph, (RecursivePathFinder)_pathFinder);
 
 		/////////////////////////////////////////////////
 		//Assignment 3.2 Good & 3.3 Excellent (Optional)
