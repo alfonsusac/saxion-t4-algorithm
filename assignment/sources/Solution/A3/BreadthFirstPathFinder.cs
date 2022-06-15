@@ -8,28 +8,33 @@ using System.Threading;
 class BreadthFirstPathFinder : RecursivePathFinder
 {
 
-	public BreadthFirstPathFinder(NodeGraph pGraph) : base(pGraph) { }
+	public BreadthFirstPathFinder(NodeGraph pGraph, bool visualized) : base(pGraph, visualized) { }
 
 	// Data Structure necessary for BFS
 	Dictionary<Node, Node> prevNode;
-
-	Node lastCurrentNode;
+	Node lastStartNode;
 
     // Overriding parent class
     protected override void initialize(Node start, Node dest)
     {
         base.initialize(start, dest);
+
+		// necessary to reset: for encapsulation
 		callqueue = new Queue<Step>();
-		prevNode = new Dictionary<Node, Node>();
 		functionForCallingFromList = CallfromStack;
 		functionCollection = callqueue;
-		prevNode[start] = null;
-		lastCurrentNode = null;
-	}
 
+		if (lastStartNode != start || prevNode == null)
+			prevNode = new Dictionary<Node, Node>();
+			prevNode[start] = null;
+	}
+	public void pregenerate(Node start)
+    {
+		generate(start, null);
+	}
 	protected override void generateWithoutVisual(Node start)
 	{
-		if(lastCurrentNode != start)
+		if(lastStartNode != start)
 			traverse(start, null);
 
 		shortestPath = generateShortestPath(destination);
@@ -37,16 +42,16 @@ class BreadthFirstPathFinder : RecursivePathFinder
 
 	protected override void generateWithVisual(Node start)
     {
-		if(lastCurrentNode != start)
+		if(lastStartNode != start)
 			new Step(this, start);
 
 		// call returnShortestPath() on the frame where the search is finished.
 	}
 
-	protected override void returnShortestPath()
+	public override List<Node> getShortestPath()
 	{
 		shortestPath = generateShortestPath(destination);
-		base.returnShortestPath();
+		return base.getShortestPath();
 	}
 
 
@@ -54,7 +59,6 @@ class BreadthFirstPathFinder : RecursivePathFinder
 	// Overriding traverse method
 	protected override void traverse(Node curr, List<Node> path = null, int dist = 0)
 	{
-		if (destination == null) return;
 		diagnostic.traverseCalls++;
 
 		// Initialize the List if it is called for the first time
@@ -76,10 +80,11 @@ class BreadthFirstPathFinder : RecursivePathFinder
 		if (!visualized)
 		{
 			if (callqueue.Count > 0)
+				// iterate to next loop
 				CallfromStack();
             else
             {
-				returnShortestPath();
+				getShortestPath();
 			}
 		}
 	}
@@ -94,6 +99,8 @@ class BreadthFirstPathFinder : RecursivePathFinder
 
 	private List<Node> generateShortestPath(Node dest)
     {
+		if(dest == null) return null; //for pregenerated paths
+
 		Node curr = dest;
 		List<Node> path = new List<Node>();
 		path.Insert(0, curr);
@@ -106,16 +113,14 @@ class BreadthFirstPathFinder : RecursivePathFinder
 			path.Insert(0, curr);
 		}
 
-		lastCurrentNode = path[0];
+		lastStartNode = path[0];
 		return path;
     }
 
 
 
-	protected Queue<Step> callqueue;
 	protected override void CallfromStack() { callqueue.Dequeue().Run(); }
-
-
+	protected Queue<Step> callqueue;
 
 	internal class Step : TraverseRecursively
 	{
