@@ -30,6 +30,8 @@ class NodeLabelDrawer : Canvas
 		_labelFont = new Font(SystemFonts.DefaultFont.FontFamily, Math.Min(_smallMode ? pNodeGraph.nodeSize : pNodeGraph.nodeSize * 2, 12));
 		_graph = pNodeGraph;
 		_agent = pNodeGraphAgent;
+
+		if(!disableDrawing) drawLabels();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
@@ -52,6 +54,8 @@ class NodeLabelDrawer : Canvas
 	/// PathAgent visualization helper methods
 	internal void drawPaths(List<Node> l, Node m = null)
 	{
+		if (disableDrawing) return; 
+
 		graphics.Clear(Color.Transparent);
 		if (m != null) l.Add(m);
 		if (l == null || l.Count == 0) return;
@@ -104,7 +108,7 @@ class NodeLabelDrawer : Canvas
 	internal void clearQueueLabels()
 	{
 		graphics.Clear(Color.Transparent);
-		marked.Clear();
+		clearMark();
 		resetCounts();
 		if (_showLabels) drawLabels();
 	}
@@ -117,6 +121,8 @@ class NodeLabelDrawer : Canvas
 
 	internal void countVisits(Node pNode)
 	{
+		if (disableDrawing) return;
+
 		if (!visitedCount.ContainsKey(pNode)) visitedCount[pNode] = 0;
 		visitedCount[pNode]++;
 		SizeF size = graphics.MeasureString("" + visitedCount[pNode], _labelFont);
@@ -151,6 +157,7 @@ class NodeLabelDrawer : Canvas
 		if (marked == null) marked = new List<Node>();
 
 		if (marked.Count > 0)
+			
 			foreach (Node m in marked)
 			{
 				graphics.FillRectangle(
@@ -179,6 +186,7 @@ class NodeLabelDrawer : Canvas
 
 	protected virtual void drawNode(Node pNode, Brush b)
 	{
+		if (disableLabelDrawing) return;
 		SizeF size = graphics.MeasureString(pNode.id, _labelFont);
 		graphics.DrawString(pNode.id, _labelFont, b, pNode.location.X - size.Width / 2 - 20, pNode.location.Y - size.Height / 2 - 20);
 	}
