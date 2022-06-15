@@ -24,7 +24,8 @@ abstract class PathFinder : Canvas
 	//some values for drawing the path
 	private Pen _outlinePen = new Pen(Color.Black, 4);
 	private Pen _connectionPen1 = new Pen(Color.Black, 10);
-	private Pen _connectionPen2 = new Pen(Color.Yellow, 3);
+	//private Pen _connectionPen2 = new Pen(Color.Yellow, 3);
+	private Pen _connectionPen2 = new Pen(Color.Yellow, 10);
 
 	private Brush _startNodeColor = Brushes.Green;
 	private Brush _endNodeColor = Brushes.Red;
@@ -65,10 +66,13 @@ abstract class PathFinder : Canvas
 			_lastCalculatedPath = generate(pFrom, pTo);
 		}
 
+		// will be recalled again
 		draw();
 
 
-		System.Console.WriteLine(this.GetType().Name + ".Generate: Path generated.");
+		Console.WriteLine(this.GetType().Name + ".Generate: Path generated.");
+
+		// will be recalled again
 		return _lastCalculatedPath;
 	}
 
@@ -108,11 +112,11 @@ abstract class PathFinder : Canvas
 			drawConnection(_lastCalculatedPath[i], _lastCalculatedPath[i + 1]);
 		}
 
-		//draw all nodes between start and end
-		for (int i = 1; i < _lastCalculatedPath.Count - 1; i++)
-		{
-			drawNode(_lastCalculatedPath[i], _pathNodeColor);
-		}
+		////draw all nodes between start and end
+		//for (int i = 1; i < _lastCalculatedPath.Count - 1; i++)
+		//{
+		//	drawNode(_lastCalculatedPath[i], _pathNodeColor);
+		//}
 	}
 
 	protected virtual void drawNodes (IEnumerable<Node> pNodes, Brush pColor)
@@ -133,20 +137,21 @@ abstract class PathFinder : Canvas
 			2 * nodeSize
 		);
 
-		//black outline
-		graphics.DrawEllipse(
-			_outlinePen,
-			pNode.location.X - nodeSize - 1,
-			pNode.location.Y - nodeSize - 1,
-			2 * nodeSize + 1,
-			2 * nodeSize + 1
-		);
+		////black outline
+		//graphics.DrawEllipse(
+		//	_outlinePen,
+		//	pNode.location.X - nodeSize - 1,
+		//	pNode.location.Y - nodeSize - 1,
+		//	2 * nodeSize + 1,
+		//	2 * nodeSize + 1
+		//);
 	}
 
 	protected virtual void drawConnection(Node pStartNode, Node pEndNode)
 	{
 		//draw a thick black line with yellow core
-		graphics.DrawLine(_connectionPen1,	pStartNode.location,pEndNode.location);
+		//graphics.DrawLine(_connectionPen1,	pStartNode.location,pEndNode.location);
+		_connectionPen2.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
 		graphics.DrawLine(_connectionPen2,	pStartNode.location,pEndNode.location);
 	}
 
