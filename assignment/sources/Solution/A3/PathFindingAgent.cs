@@ -15,13 +15,20 @@ class PathFindingAgent : SampleNodeGraphAgent
 	public PathFindingAgent(NodeGraph pNodeGraph, RecursivePathFinder pPathFinder, float _pscale = 1f) : base(pNodeGraph)
 	{
 		_pf = pPathFinder;
+		if (_pf is BreadthFirstPathFinder)
+            (_pf as BreadthFirstPathFinder).pregenerate(currentNode);
 	}
 
 	protected override void onNodeClickHandler(Node pNode)
 	{
-		if (IsMoving) 
-			return;
+		if (TargetsQueue.Count > 0) currentNode = _target;
+		TargetsQueue.Clear();
+
+		if (IsMoving) return;
+
+
 		// On Click on the nodes
+		// check their immediate neighbors. If yes then move.
 		foreach (Node n in currentNode.connections)
 		{
 			if (n.location == pNode.location)
@@ -33,14 +40,17 @@ class PathFindingAgent : SampleNodeGraphAgent
 			}
 		}
 
-		List<Node> generatedShortestPath = _pf.Generate(currentNode, pNode);
+		_pf.Generate(currentNode, pNode);
 
-		if(generatedShortestPath != null)
+		if(_pf.getShortestPath() != null)
         {
-			if (_pf.visualized) waitForGeneration = true;
-			foreach (Node n in generatedShortestPath)
+			foreach (Node n in _pf.getShortestPath())
+				
 				_targetsqueue.Enqueue(n);
-		}
+        }
+        else
+			
+			waitForGeneration = true;
 	}
 
 	private bool waitForGeneration;
@@ -50,9 +60,15 @@ class PathFindingAgent : SampleNodeGraphAgent
         if (waitForGeneration && !_pf.IsRunning)
         {
 			waitForGeneration = false;
-			foreach (Node n in _pf.ShortestPath)
+
+			// Extract the path to the agent's walk queue
+			if(_pf.getShortestPath() != null) foreach (Node n in _pf.getShortestPath())
+				
 				_targetsqueue.Enqueue(n);
+
 		}
+
+		// execute the walk queue.
 		base.Update();
     }
 
