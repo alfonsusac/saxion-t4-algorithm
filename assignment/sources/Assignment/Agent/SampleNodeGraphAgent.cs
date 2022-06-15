@@ -66,95 +66,63 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 
 	const bool isFinished = true;
 
-	private void DequeueNextNode()
-    {
-		_labelDrawer.drawQueuePath(TargetsQueue);
-		_target = TargetsQueue.Dequeue();
-		_labelDrawer.markNode(_target);
-		toggleMovingStatus(true);
-	}
-	private void UpdateOnceArrived()
-    {
-		_target = null;
-	}
+
 
 
 
 	protected override void Update()
 	{
 		// FOR EVERY FRAME
-		if (_targetsqueue.Count > 0)
 
-			if (_target == null)
+		if (_target == null)
+
+			if(_targetsqueue.Count > 0)
 
 				DequeueNextNode();
 
-		if (_target != null)
+			else
+
+				toggleMovingStatus(false);
+
+		else //if (_target != null)
 
 			if (moveTowardsNode(_target) == isFinished)
 
 				UpdateOnceArrived();
 
+	}
+	private void DequeueNextNode()
+	{
+		// Graphic Stuff
+
+		_labelDrawer.drawQueuePath(TargetsQueue);
+
+		_labelDrawer.markNode(TargetsQueue.Peek());
 
 
+		if (currentNode != TargetsQueue.Peek() && !currentNode.connections.Contains(TargetsQueue.Peek()))
+			
+			Console.WriteLine($"WARNING!: At{currentNode} The next target {TargetsQueue.Peek()} is not neighboring node");
 
-		//		// Check if currently there is no queue
-		//		if (_targetsqueue.Count == 0 && _target == null)
-		//	return;
-		//      else
-		//      {
-		//	// Target Queue Contains Something.. or target is not null Do the following:
+		_target = TargetsQueue.Dequeue();
 
-				//	// If there is a queue in the _targetsqueue, then peek and set that as the target.
-				//	if (_target == null)
-				//	{
-				//		toggleMovingStatus(true);
-				//		currentNode = _target = _targetsqueue.Peek();
-				//	}
-
-				//	// the Agent will start moving to _target while checking the queue and the target.
-				//	bool arriveAtNode = moveTowardsNode(_target);
-
-				//	// Once done moving,
-				//	if (arriveAtNode)
-				//	{
-				//		// set the current node to the current node. For this case the variable is still useless
-				//		// also dequeue the current Node
-				//		_targetsqueue.Dequeue();
-
-				//		_labelDrawer.drawQueuePath();
-
-				//		if (_targetsqueue.Count > 0)
-				//		{
-				//			// if there are more nodes queueing, then dequeue them as the next target
-				//			//_labelDrawer.clearConnectionLabel(_target, _targetsqueue.Peek());
-				//			_labelDrawer.markNode(_target);
-				//			currentNode = _target = _targetsqueue.Peek();
-				//		}
-				//		else
-				//		{
-				//			// else, set it to null to stop the agent.
-				//			_target = null;
-				//			toggleMovingStatus(false);
-				//			_labelDrawer.clearQueueLabels();
-				//		}
-				//	}
-				//}
-				// 👇👇 for keepsake 👇👇
-				////no target? Don't walk
-				//if (_target == null) return;
-
-				////Move towards the target node, if we reached it, clear the target
-				//if (moveTowardsNode(_target))
-				//{
-				//	_target = null;
-				//}
+		
+		
+		//toggleMovingStatus(true);
+	}
+	private void UpdateOnceArrived()
+	{
+		_target = null;
 	}
 
+	bool strictDebug = false;
 	protected void toggleMovingStatus(bool b)
     {
-		//if      (isMoving == false && b == true)  isMoving = b; 
-		//else if (isMoving == true  && b == false) isMoving = b;
-		//else    throw new Exception($"isMoving is already at {isMoving}!! (b = {b})");
+        if (strictDebug)
+			if (isMoving == false && b == true) isMoving = b;
+			else if (isMoving == true && b == false) isMoving = b;
+			else throw new Exception($"isMoving is already at {isMoving}!! (b = {b})");
+		else
+			isMoving = b;
     }
 }
