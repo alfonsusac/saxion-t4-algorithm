@@ -17,10 +17,11 @@ class RecursivePathFinder : PathFinder
 	protected Node destination { get; set; }
 	protected int shortestDist = int.MaxValue;
 	protected List<Node> shortestPath;
+	public List<Node> ShortestPath { get { return shortestPath; } }
 
 	// private Attribute
-	bool running;
 	public bool IsRunning { get { return running; } }
+	bool running;
 
 	// [] Visualization
 	// this will enable visualizing the graphs and updating the frame
@@ -147,7 +148,6 @@ class RecursivePathFinder : PathFinder
 
     internal class TraverseRecursively
 	{
-		
 		readonly Node currentNode;
 		readonly List<Node> travelPath;
 		readonly int distance;

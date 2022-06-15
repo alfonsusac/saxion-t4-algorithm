@@ -16,7 +16,6 @@ class NodeLabelDrawer : Canvas
 
 	private NodeGraph _graph = null;
 	private NodeGraphAgent _agent = null;
-	private RandomWayPointAgent _rwagent = null;
 
 	public static bool disableDrawing = false;
 	public static bool disableLabelDrawing = true;
@@ -31,8 +30,6 @@ class NodeLabelDrawer : Canvas
 		_labelFont = new Font(SystemFonts.DefaultFont.FontFamily, Math.Min(_smallMode ? pNodeGraph.nodeSize : pNodeGraph.nodeSize * 2, 12));
 		_graph = pNodeGraph;
 		_agent = pNodeGraphAgent;
-		_rwagent = _agent as RandomWayPointAgent;
-		drawLabels();
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
@@ -41,77 +38,71 @@ class NodeLabelDrawer : Canvas
 
 	//this has to be virtual otherwise the subclass won't pick it up
 	protected virtual void Update()
-    {
-        //toggle label display when L is pressed
-        if (Input.GetKeyDown(Key.L))
-        {
-            _showLabels = !_showLabels;
-            graphics.Clear(Color.Transparent);
-            if (_showLabels && !disableDrawing) drawLabels();
-        }
+	{
+		//toggle label display when L is pressed
+		if (Input.GetKeyDown(Key.L))
+		{
+			_showLabels = !_showLabels;
+			graphics.Clear(Color.Transparent);
+			if (_showLabels && !disableDrawing) drawLabels();
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	/// PathAgent visualization helper methods
 	internal void drawPaths(List<Node> l, Node m = null)
-    {
+	{
 		graphics.Clear(Color.Transparent);
 		if (m != null) l.Add(m);
-		if (l == null || l.Count == 0 ) return;
+		if (l == null || l.Count == 0) return;
 		Node prevN = null;
-		foreach(Node n in l)
-        {
+		foreach (Node n in l)
+		{
 			if (prevN == null) prevN = n;
 			else
-            {
+			{
 				drawConnections(prevN, n, 10);
-            }
+			}
 			prevN = n;
-        }
+		}
 		if (m != null) l.Remove(m);
-    }
+	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	/// NodeGraph visualization helper methods
 
-	internal void drawQueueLabels()
-    {
+	internal void drawQueuePath(Queue<Node> q)
+	{
 		if (disableDrawing) return;
 
 		graphics.Clear(Color.Transparent);
 
 		if (_showLabels) drawLabels();
 
-		if (_rwagent.IsMoving)
-		{
-			if (_rwagent.TargetsQueue.Count > 0)
+		if (q.Count > 0) for (int i = 0; i < q.Count; i++)
 			{
-				Queue<Node> q = _rwagent.TargetsQueue;
-				for (int i = 0; i < q.Count; i++)
-				{
-					if (_showLabels) drawNode(q.ToArray()[i], Brushes.Black);
-					if (i < q.Count - 1)
-					{
-						drawConnections(q.ToArray()[i], q.ToArray()[i + 1]);
-					}
-				}
+				if (_showLabels)
+					drawNode(q.ToArray()[i], Brushes.Black);
+
+				if (i < q.Count - 1)
+					drawConnections(q.ToArray()[i], q.ToArray()[i + 1]);
 			}
-		}
+
 		drawMarkedNode();
 	}
 	internal void drawConnections(Node n1, Node n2, int depth = 0, Pen q = null)
-    {
-		if(q == null)
-        {
-			if (depth == 0) depth = nodeSize * 2 -2;
+	{
+		if (q == null)
+		{
+			if (depth == 0) depth = nodeSize * 2 - 2;
 			q = new Pen(Color.FromArgb(100, Color.White), depth);
 			q.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
 		}
 		graphics.DrawLine(q, n1.location, n2.location);
-    }
+	}
 
-    internal void clearQueueLabels()
-    {
+	internal void clearQueueLabels()
+	{
 		graphics.Clear(Color.Transparent);
 		marked.Clear();
 		resetCounts();
@@ -120,48 +111,62 @@ class NodeLabelDrawer : Canvas
 
 	Dictionary<Node, int> visitedCount = new Dictionary<Node, int>();
 	internal void resetCounts()
-    {
+	{
 		visitedCount.Clear();
 	}
 
-    internal void countVisits(Node pNode)
-    {
-		if(!visitedCount.ContainsKey(pNode)) visitedCount[pNode] = 0;
+	internal void countVisits(Node pNode)
+	{
+		if (!visitedCount.ContainsKey(pNode)) visitedCount[pNode] = 0;
 		visitedCount[pNode]++;
 		SizeF size = graphics.MeasureString("" + visitedCount[pNode], _labelFont);
 		graphics.FillRectangle(Brushes.White, pNode.location.X, pNode.location.Y - size.Height / 2 - 20, size.Width, size.Height);
 		graphics.DrawString("" + visitedCount[pNode], _labelFont, Brushes.Blue, pNode.location.X, pNode.location.Y - size.Height / 2 - 20);
 	}
 
-    private int nodeSize = 5;
+	private int nodeSize = 5;
+	private float tileSize { get { return nodeSize * 1.2f; } }
 	public void setNodeSize(int i)
     {
 		nodeSize = i + 2;
     }
 
-	List<Node> marked = new List<Node>();
+	List<Node> marked;
+
+	internal void clearMark()
+    {
+		marked = new List<Node>();	
+    }
 
 	internal void markNode(Node n)
     {
-		if (disableDrawing) return;
+		if(marked == null) marked = new List<Node>();
 
 		marked.Add(n);
-
 	}
 	internal void drawMarkedNode()
     {
 		if (disableDrawing) return;
 
+		if (marked == null) marked = new List<Node>();
+
 		if (marked.Count > 0)
 			foreach (Node m in marked)
 			{
-				graphics.FillEllipse(
-					Brushes.White,
-					m.location.X - nodeSize,
-					m.location.Y - nodeSize,
-					2 * nodeSize,
-					2 * nodeSize
-				);
+				graphics.FillRectangle(
+					brush: new SolidBrush(Color.FromArgb(25, Color.Brown)),
+					x: m.location.X - tileSize * 2,
+					y: m.location.Y - tileSize * 2,
+					width: 4 * tileSize,
+					height: 4 * tileSize);
+
+				//graphics.FillEllipse(
+				//	Brushes.White,
+				//	m.location.X - nodeSize,
+				//	m.location.Y - nodeSize,
+				//	2 * nodeSize,
+				//	2 * nodeSize
+				//);
 			}
 	}
 

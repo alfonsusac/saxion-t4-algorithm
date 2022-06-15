@@ -16,14 +16,14 @@ class RandomWayPointAgent : SampleNodeGraphAgent
 	protected override void onNodeClickHandler(Node pNode)
 	{
 
-		if (isMoving) return;
+		if (IsMoving) return;
 		// On Click on the nodes
 		foreach (Node n in currentNode.connections)
 		{
 			if (n.location == pNode.location)
 			{
 				_targetsqueue.Enqueue(n);
-				isMoving = true;
+				
 				Console.WriteLine("Neighbor node found");
 				return;
 			}
@@ -40,8 +40,6 @@ class RandomWayPointAgent : SampleNodeGraphAgent
 		// initialize
 		stack.Push(traverse);
 		visited[traverse.id] = true;
-
-
 
 		while ( true )
 		{
@@ -67,8 +65,8 @@ class RandomWayPointAgent : SampleNodeGraphAgent
 			if (curr == pNode)
 			{
 				P($"\nNode Found!!!\n");
-				isMoving = true;
-				_labelDrawer.drawQueueLabels();
+
+				_labelDrawer.drawQueuePath(TargetsQueue);
 				break;
 			}
 
@@ -134,10 +132,11 @@ class RandomWayPointAgent : SampleNodeGraphAgent
                 else
                 {
 					Console.WriteLine($"\n.\n.\n.\n\nNode Not Found After a long search??? ");
-					isMoving = true;
+					toggleMovingStatus(true);
 					break;
 				}
 			}
 		}
 	}
+
 }

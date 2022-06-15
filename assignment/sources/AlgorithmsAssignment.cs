@@ -27,7 +27,7 @@ class AlgorithmsAssignment : Game
 	PathFinder _pathFinder = null;
 
 	//common settings
-	private const int SCALE = 50;       //TODO: experiment with changing this
+	private const int SCALE = 20;       //TODO: experiment with changing this
 	private const int MIN_ROOM_SIZE = 3;	//TODO: use this setting in your dungeon generator
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
@@ -193,7 +193,7 @@ class AlgorithmsAssignment : Game
 		_pathFinder = new BreadthFirstPathFinder(_graph);
 
 		//TODO: Implement a PathFindingAgent that uses one of your pathfinder implementations (should work with any pathfinder implementation)
-		//_agent = new PathFindingAgent(_graph, _pathFinder);
+	//	_agent = new PathFindingAgent(_graph, (RecursivePathFinder)_pathFinder);
 
 		/////////////////////////////////////////////////
 		//Assignment 3.2 Good & 3.3 Excellent (Optional)
