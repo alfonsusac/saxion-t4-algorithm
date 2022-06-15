@@ -8,7 +8,9 @@ using System.Threading;
 class RecursivePathFinder : PathFinder
 {
 
-	public RecursivePathFinder(NodeGraph pGraph) : base(pGraph) { }
+	public RecursivePathFinder(NodeGraph pGraph, bool visualized) : base(pGraph) {
+		this.visualized = visualized;
+	}
 
 	// Diagnostics
 	protected BasicDiagnostic diagnostic;
@@ -16,6 +18,7 @@ class RecursivePathFinder : PathFinder
 	// Attributes to be inherited
 	protected Node destination { get; set; }
 	protected int shortestDist = int.MaxValue;
+	private List<Node> tempShortestPath;
 	protected List<Node> shortestPath;
 	public List<Node> ShortestPath { get { return shortestPath; } }
 
@@ -39,7 +42,7 @@ class RecursivePathFinder : PathFinder
 
 		// necessary to reset: initialization
 		destination = dest;
-		shortestPath = null;
+		tempShortestPath = null;
 		shortestDist = int.MaxValue;
 		running = false;
 
@@ -47,7 +50,8 @@ class RecursivePathFinder : PathFinder
 		initializeVisualization();
 
 		// Resetting Graphic Stuff
-		_labelDrawer.clearQueueLabels();
+		if(_labelDrawer != null)
+			_labelDrawer.clearQueueLabels();
 	}
 
 	protected virtual void initializeForRecursion()
@@ -75,7 +79,11 @@ class RecursivePathFinder : PathFinder
 			running = true;
 			generateWithVisual(pFrom);
 		}
-		else generateWithoutVisual(pFrom);
+		else
+		{
+			generateWithoutVisual(pFrom);
+			returnShortestPath();
+		}
 
 		// if visualized, return null first. Then render later
 		// if not visualize, then shortestPath list would be populated.
@@ -106,7 +114,7 @@ class RecursivePathFinder : PathFinder
 		if (n == destination)
         {
 			// If the distance to this node is the shortest node.
-			if( dist < shortestDist)
+			if( dist < shortestDist )
 
 				// then copy path to the global shortestpath
 				markAsShortest(n, dist, path);
@@ -128,14 +136,16 @@ class RecursivePathFinder : PathFinder
 
 		}
 
+		path.RemoveAt(path.Count-1);
+
 	}
 
 	protected void markAsShortest(Node n, int dist, List<Node> path)
     {
-		//Console.WriteLine($"[{dist}] Traversing ... : Found Shortest Destination! {shortestPath.Count}");
-		shortestDist = dist;
-		shortestPath = new List<Node>(path);
-		shortestPath.Add(n);
+        Console.WriteLine($"Mark As Shortest [{n}]");
+        shortestDist = dist;
+		tempShortestPath = new List<Node>(path);
+		tempShortestPath.Add(n);
     }
 
 
@@ -207,7 +217,7 @@ class RecursivePathFinder : PathFinder
 		{
 			// Delay the visualization
 			if (lastRun == 0) lastRun = Time.now;
-			if (Time.now - lastRun > 1 && functionCollection != null)
+			if (Time.now - lastRun > 0 && functionCollection != null)
 			{
 				lastRun = Time.now;
 
@@ -236,10 +246,13 @@ class RecursivePathFinder : PathFinder
 		return functionCollection.Count();
     }
 
-	protected virtual void returnShortestPath()
+	protected virtual List<Node> returnShortestPath()
     {
+		if (this is RecursivePathFinder) shortestPath = tempShortestPath;
+		if (shortestPath == null) throw new Exception("Shortest Path is Not Yet Calculated");
 		_lastCalculatedPath = shortestPath;
 		draw();
+		return _lastCalculatedPath;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
