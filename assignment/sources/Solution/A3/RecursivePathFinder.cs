@@ -18,13 +18,12 @@ class RecursivePathFinder : PathFinder
 	// Attributes to be inherited
 	protected Node destination { get; set; }
 	protected int shortestDist = int.MaxValue;
-	private List<Node> tempShortestPath;
 	protected List<Node> shortestPath;
-	public List<Node> ShortestPath { get { return shortestPath; } }
 
-	// private Attribute
-	public bool IsRunning { get { return running; } }
+	// for recursive stuff
+	private List<Node> tempShortestPath;
 	bool running;
+	public bool IsRunning { get { return running; } }
 
 	// [] Visualization
 	// this will enable visualizing the graphs and updating the frame
@@ -67,6 +66,8 @@ class RecursivePathFinder : PathFinder
 
 	protected override List<Node> generate(Node pFrom, Node pTo)
 	{
+		if(reuseSolution(pFrom, pTo))
+			return shortestPath;
 
 		// Initialization
 		initialize(pFrom, pTo);
@@ -82,7 +83,7 @@ class RecursivePathFinder : PathFinder
 		else
 		{
 			generateWithoutVisual(pFrom);
-			returnShortestPath();
+			getShortestPath();
 		}
 
 		// if visualized, return null first. Then render later
@@ -140,20 +141,48 @@ class RecursivePathFinder : PathFinder
 
 	}
 
-	protected void markAsShortest(Node n, int dist, List<Node> path)
+	protected virtual void traverseThrough(Node child, List<Node> path, int dist)
+	{
+		if (visualized) new TraverseRecursively(this, child, path, dist + 1); else traverse(child, path, dist + 1);
+		diagnostic.edgeVisited++;
+	}
+	protected virtual bool reuseSolution(Node start, Node end)
     {
-        Console.WriteLine($"Mark As Shortest [{n}]");
+		if (shortestPath != null && shortestPath[0] == start && shortestPath[shortestPath.Count - 1] == end)
+		{
+			Console.WriteLine("The reqeusted path is the same as the last one so.......");
+			return true;
+		}
+		return false;
+	}
+
+	// The way to get shortest path based on the algorithm.
+	public virtual List<Node> getShortestPath()
+	{
+		if (this is RecursivePathFinder) // bcs recursive path finder has to manually udpate ShortestPath.
+			shortestPath = tempShortestPath;
+
+		if (shortestPath == null) 
+			Console.WriteLine("Shortest Path is Not Found!");
+
+		return shortestPath;
+	}
+
+	private void drawSolution()
+    {
+		_lastCalculatedPath = shortestPath;
+		draw();
+	}
+
+	private void markAsShortest(Node n, int dist, List<Node> path)
+    {
         shortestDist = dist;
 		tempShortestPath = new List<Node>(path);
 		tempShortestPath.Add(n);
     }
 
 
-	protected virtual void traverseThrough(Node child, List<Node> path, int dist)
-    {
-		if (visualized) new TraverseRecursively(this, child, path, dist + 1); else traverse(child, path, dist + 1);
-		diagnostic.edgeVisited++;
-	}
+
 
 
     internal class TraverseRecursively
@@ -232,8 +261,10 @@ class RecursivePathFinder : PathFinder
 					Console.WriteLine("Recursive Generation Completed!");
 					Console.WriteLine(funcCollectionCount());
 
+					getShortestPath();
+
 					// apply the last calculated path AND draw it
-					returnShortestPath();
+					drawSolution();
 
 					// turn the machine off!
 					running = false;
@@ -246,14 +277,7 @@ class RecursivePathFinder : PathFinder
 		return functionCollection.Count();
     }
 
-	protected virtual List<Node> returnShortestPath()
-    {
-		if (this is RecursivePathFinder) shortestPath = tempShortestPath;
-		if (shortestPath == null) throw new Exception("Shortest Path is Not Yet Calculated");
-		_lastCalculatedPath = shortestPath;
-		draw();
-		return _lastCalculatedPath;
-	}
+
 
 	//////////////////////////////////////////////////////////////////////////////
 	// HELPER METHOD
