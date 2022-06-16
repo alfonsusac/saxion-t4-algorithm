@@ -31,7 +31,7 @@ class PathFinder_Recursive : PathFinder
 	public readonly bool visualized = false;
 
 	// These are required since the recursion now happens for every frame
-	protected virtual void initialize(Node start, Node dest)
+	protected virtual void _initialize(Node start, Node dest)
 	{
 		// Diagnostics
 		diagnostic = new BasicDiagnostic();
@@ -47,7 +47,15 @@ class PathFinder_Recursive : PathFinder
 		 // Resetting Graphic Stuff
 		if(_labelDrawer != null)
 			_labelDrawer.clearQueueLabels();
+
+		if(GetType() != typeof(PathFinder_Recursive))
+
+			initialize(start, dest);
 	}
+	protected virtual void initialize(Node start, Node dest)
+    {
+		throw new NotImplementedException();
+    }
 
 	protected virtual void initializeForRecursion()
     {
@@ -65,9 +73,8 @@ class PathFinder_Recursive : PathFinder
 	protected override List<Node> generate(Node pFrom, Node pTo)
 	{
 
-
 		// Initialization
-		initialize(pFrom, pTo);
+		_initialize(pFrom, pTo);
 
 		// Start diagnosting
 		diagnostic.startDiagnostic($"{GetType()}");
@@ -234,7 +241,7 @@ class PathFinder_Recursive : PathFinder
 				lastRun = Time.now;
 
 				// If there is something in the stack? then call it.
-				if (funcCollectionCount() > 0) 
+				if (_labelDrawer != null && funcCollectionCount() > 0) 
 					functionForCallingFromList();
 
 				// If the Recursion is finally done

@@ -19,8 +19,6 @@ class PathFinder_BreadthFirst : PathFinder_Recursive
     // Overriding parent class
     protected override void initialize(Node start, Node dest)
     {
-        base.initialize(start, dest);
-
 		// necessary to reset: for encapsulation
 		callqueue = new Queue<Step>();
 		functionForCallingFromList = CallfromStack;
