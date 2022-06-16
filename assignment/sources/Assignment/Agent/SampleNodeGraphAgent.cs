@@ -22,7 +22,6 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 	public SampleNodeGraphAgent(NodeGraph pNodeGraph) : base(pNodeGraph)
 	{
 		SetOrigin(width / 2, height / 2);
-		isMoving = false;
 
 		//position ourselves on a random node
 		if (pNodeGraph.nodes.Count > 0)
@@ -32,6 +31,7 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 
 		//listen to nodeclicks
 		pNodeGraph.OnNodeLeftClicked += _onNodeClickHandler;
+
 		pNodeGraph.OnNodeRightClicked += jumpToNode;
 	}
 	protected override void jumpToNode(Node pNode)
@@ -43,7 +43,13 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 
 	private void _onNodeClickHandler(Node pNode)
     {
+		// Interrupting the queue
+		if (TargetsQueue.Count > 0 && _target != null) currentNode = _target;
+
+		TargetsQueue.Clear();
+
 		_labelDrawer.clearMark();
+
 		onNodeClickHandler(pNode);
 	}
 
@@ -65,10 +71,6 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 	public Queue<Node> TargetsQueue { get { return _targetsqueue; } }
 
 	const bool isFinished = true;
-
-
-
-
 
 	protected override void Update()
 	{
@@ -119,10 +121,15 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 	protected void toggleMovingStatus(bool b)
     {
         if (strictDebug)
+
 			if (isMoving == false && b == true) isMoving = b;
+
 			else if (isMoving == true && b == false) isMoving = b;
+
 			else throw new Exception($"isMoving is already at {isMoving}!! (b = {b})");
+
 		else
+
 			isMoving = b;
     }
 }

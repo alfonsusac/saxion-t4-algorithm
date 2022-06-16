@@ -8,9 +8,9 @@ using System.Text;
  * Very simple example of a nodegraphagent that walks directly to the node you clicked on,
  * ignoring walls, connections etc.
  */
-class RandomWayPointAgent : SampleNodeGraphAgent
+class Agent_RandomWayPoint : SampleNodeGraphAgent
 {
-	public RandomWayPointAgent(NodeGraph pNodeGraph) : base(pNodeGraph)
+	public Agent_RandomWayPoint(NodeGraph pNodeGraph) : base(pNodeGraph)
 	{ }
 
 	protected override void onNodeClickHandler(Node pNode)

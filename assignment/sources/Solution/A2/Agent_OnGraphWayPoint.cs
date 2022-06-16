@@ -7,7 +7,7 @@ using System.Drawing;
  * Very simple example of a nodegraphagent that walks directly to the node you clicked on,
  * ignoring walls, connections etc.
  */
-class OnGraphWayPointAgent : NodeGraphAgent
+class Agent_OnGraphWayPoint : NodeGraphAgent
 {
     //Current target to move towards
     private Node _target = null;
@@ -15,11 +15,11 @@ class OnGraphWayPointAgent : NodeGraphAgent
 	private Node lastlyAddedNode;
 	private Node currentNode;
 
-	public OnGraphWayPointAgent(NodeGraph pNodeGraph) : base(pNodeGraph)
+	public Agent_OnGraphWayPoint(NodeGraph pNodeGraph) : base(pNodeGraph)
 	{
 		SetOrigin(width / 2, height / 2);
 		
-		HighLevelDungeonNodeGraph nodegraph = pNodeGraph as HighLevelDungeonNodeGraph;
+		NodeGraph_HighLevelDungeon nodegraph = pNodeGraph as NodeGraph_HighLevelDungeon;
 
 		//Console.WriteLine($"Node Graph Dimension {nodegraph.}, {pNodeGraph.height}");
 

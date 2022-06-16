@@ -15,11 +15,11 @@ using System.Drawing;
  * TODO:
  * - Create a subclass of this class, and override the generate method, see the generate method below for an example.
  */
-class HighLevelDungeonNodeGraph : NodeGraph
+class NodeGraph_HighLevelDungeon : NodeGraph
 {
 	protected Dungeon _dungeon;
 
-	public HighLevelDungeonNodeGraph(Dungeon pDungeon) : base((int)(pDungeon.size.Width * pDungeon.scale), (int)(pDungeon.size.Height * pDungeon.scale), ((int)pDungeon.scale / 3)+1) // + 1 because it gets too small
+	public NodeGraph_HighLevelDungeon(Dungeon pDungeon) : base((int)(pDungeon.size.Width * pDungeon.scale), (int)(pDungeon.size.Height * pDungeon.scale), ((int)pDungeon.scale / 3)+1) // + 1 because it gets too small
 	{
 		Debug.Assert(pDungeon != null, "Please pass in a dungeon.");
 

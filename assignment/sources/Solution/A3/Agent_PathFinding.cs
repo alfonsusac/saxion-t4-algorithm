@@ -8,24 +8,19 @@ using System.Text;
  * Very simple example of a nodegraphagent that walks directly to the node you clicked on,
  * ignoring walls, connections etc.
  */
-class PathFindingAgent : SampleNodeGraphAgent
+class Agent_PathFinding : SampleNodeGraphAgent
 {
-	RecursivePathFinder _pf;
+	PathFinder_Recursive _pf;
 
-	public PathFindingAgent(NodeGraph pNodeGraph, RecursivePathFinder pPathFinder, float _pscale = 1f) : base(pNodeGraph)
+	public Agent_PathFinding(NodeGraph pNodeGraph, PathFinder_Recursive pPathFinder, float _pscale = 1f) : base(pNodeGraph)
 	{
 		_pf = pPathFinder;
-		if (_pf is BreadthFirstPathFinder)
-            (_pf as BreadthFirstPathFinder).pregenerate(currentNode);
 	}
 
 	protected override void onNodeClickHandler(Node pNode)
 	{
-		if (TargetsQueue.Count > 0) currentNode = _target;
-		TargetsQueue.Clear();
-
+		// To-do clean this up
 		if (IsMoving) return;
-
 
 		// On Click on the nodes
 		// check their immediate neighbors. If yes then move.
@@ -42,9 +37,11 @@ class PathFindingAgent : SampleNodeGraphAgent
 
 		_pf.Generate(currentNode, pNode);
 
-		if(_pf.getShortestPath() != null)
+		List<Node> generatedPath = _pf.getShortestPath();
+
+		if(generatedPath != null)
         {
-			foreach (Node n in _pf.getShortestPath())
+			foreach (Node n in generatedPath)
 				
 				_targetsqueue.Enqueue(n);
         }

@@ -5,10 +5,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-class RecursivePathFinder : PathFinder
+class PathFinder_Recursive : PathFinder
 {
 
-	public RecursivePathFinder(NodeGraph pGraph, bool visualized) : base(pGraph) {
+	public PathFinder_Recursive(NodeGraph pGraph, bool visualized) : base(pGraph) {
 		this.visualized = visualized;
 	}
 
@@ -41,22 +41,20 @@ class RecursivePathFinder : PathFinder
 
 		// necessary to reset: initialization
 		destination = dest;
-		tempShortestPath = null;
 		shortestDist = int.MaxValue;
 		running = false;
 
-		// necessary to reset: visualization
-		initializeVisualization();
-
-		// Resetting Graphic Stuff
+		 // Resetting Graphic Stuff
 		if(_labelDrawer != null)
 			_labelDrawer.clearQueueLabels();
 	}
 
 	protected virtual void initializeForRecursion()
     {
-		if(this is RecursivePathFinder)
+		if(GetType() == typeof(PathFinder_Recursive))
         {
+			tempShortestPath = null;
+
 			functionForCallingFromList = CallfromStack;
 			callstack = new Stack<TraverseRecursively>();
 			functionCollection = callstack;
@@ -66,8 +64,7 @@ class RecursivePathFinder : PathFinder
 
 	protected override List<Node> generate(Node pFrom, Node pTo)
 	{
-		if(reuseSolution(pFrom, pTo))
-			return shortestPath;
+
 
 		// Initialization
 		initialize(pFrom, pTo);
@@ -78,11 +75,13 @@ class RecursivePathFinder : PathFinder
 		if (visualized)
 		{
 			running = true;
+
 			generateWithVisual(pFrom);
 		}
 		else
 		{
 			generateWithoutVisual(pFrom);
+
 			getShortestPath();
 		}
 
@@ -146,20 +145,10 @@ class RecursivePathFinder : PathFinder
 		if (visualized) new TraverseRecursively(this, child, path, dist + 1); else traverse(child, path, dist + 1);
 		diagnostic.edgeVisited++;
 	}
-	protected virtual bool reuseSolution(Node start, Node end)
-    {
-		if (shortestPath != null && shortestPath[0] == start && shortestPath[shortestPath.Count - 1] == end)
-		{
-			Console.WriteLine("The reqeusted path is the same as the last one so.......");
-			return true;
-		}
-		return false;
-	}
-
 	// The way to get shortest path based on the algorithm.
 	public virtual List<Node> getShortestPath()
 	{
-		if (this is RecursivePathFinder) // bcs recursive path finder has to manually udpate ShortestPath.
+		if (GetType() == typeof(PathFinder_Recursive)) // bcs recursive path finder has to manually udpate ShortestPath.
 			shortestPath = tempShortestPath;
 
 		if (shortestPath == null) 
@@ -178,7 +167,7 @@ class RecursivePathFinder : PathFinder
     {
         shortestDist = dist;
 		tempShortestPath = new List<Node>(path);
-		tempShortestPath.Add(n);
+		tempShortestPath.Add(n);	
     }
 
 
@@ -190,9 +179,9 @@ class RecursivePathFinder : PathFinder
 		readonly Node currentNode;
 		readonly List<Node> travelPath;
 		readonly int distance;
-		readonly protected RecursivePathFinder pf;
+		readonly protected PathFinder_Recursive pf;
 
-		public TraverseRecursively(RecursivePathFinder r, Node n, List<Node> l = null, int i = 0)
+		public TraverseRecursively(PathFinder_Recursive r, Node n, List<Node> l = null, int i = 0)
 		{
 			pf = r;
 			Add(this);
@@ -200,7 +189,6 @@ class RecursivePathFinder : PathFinder
 			currentNode = n;
 			if (l != null) travelPath = new List<Node>(l); else travelPath = new List<Node>();
 			distance = i;
-
 		}
 		public virtual void Add(TraverseRecursively t)
         {
@@ -226,11 +214,6 @@ class RecursivePathFinder : PathFinder
 	protected int lastRun;
 	protected Stack<TraverseRecursively> callstack = new Stack<TraverseRecursively>();
 	protected IEnumerable<TraverseRecursively> functionCollection;
-
-	protected void initializeVisualization()
-    {
-		functionForCallingFromList = CallfromStack;
-	}
 
 	protected virtual void CallfromStack() {
 		Console.WriteLine("CallfromStack");
