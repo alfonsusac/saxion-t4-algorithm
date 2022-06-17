@@ -27,8 +27,8 @@ class AlgorithmsAssignment : Game
 	PathFinder _pathFinder = null;
 
 	//common settings
-	private const int SCALE = 68;       //TODO: experiment with changing this
-	private const int MIN_ROOM_SIZE = 2;	//TODO: use this setting in your dungeon generator
+	private const int SCALE = 20;       //TODO: experiment with changing this
+	private const int MIN_ROOM_SIZE = 3;	//TODO: use this setting in your dungeon generator
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{
@@ -38,7 +38,7 @@ class AlgorithmsAssignment : Game
 		NodeGraph.doNotDraw = true;
 		NodeGraphAgent.debug = false;
 		NodeLabelDrawer.disableDrawing = false;
-		NodeLabelDrawer.disableLabelDrawing = false;
+		NodeLabelDrawer.disableLabelDrawing = true;
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 		///	BASE SETUP - FEEL FREE TO SKIP
@@ -183,7 +183,7 @@ class AlgorithmsAssignment : Game
         //TODO: Comment out the SamplePathFinder, implement a PathFinder_Recursive and uncomment it below
 
         //_pathFinder = new SamplePathFinder(_graph);
-	//	_pathFinder = new PathFinder_Recursive(_graph, false);
+	//	_pathFinder = new PathFinder_Recursive(_graph, true);
 		//new Thread( e=> new PathFinder_Recursive(_graph) ).Start();
 
 		//////////////////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ class AlgorithmsAssignment : Game
 		_pathFinder = new PathFinder_BreadthFirst(_graph, false);
 
 		//TODO: Implement a PathFindingAgent that uses one of your pathfinder implementations (should work with any pathfinder implementation)
-		_agent = new Agent_PathFinding(_graph, (PathFinder_Recursive)_pathFinder);
+		_agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
 
 		/////////////////////////////////////////////////
 		//Assignment 3.2 Good & 3.3 Excellent (Optional)
@@ -215,8 +215,6 @@ class AlgorithmsAssignment : Game
         _nodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
         if (_agent != null)			_agent.SetLabelDrawer(_nodeLabelDrawer);
 		if (_pathFinder != null)	_pathFinder.SetLabelDrawer(_nodeLabelDrawer);
-
-
 
 		if (grid != null)		AddChild(grid);
 		if (_dungeon != null)	AddChild(_dungeon);

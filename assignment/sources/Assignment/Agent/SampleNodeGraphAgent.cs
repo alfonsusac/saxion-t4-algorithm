@@ -8,17 +8,22 @@ using System.Collections.Generic;
  */
 abstract class SampleNodeGraphAgent : NodeGraphAgent
 {
-	//Current target to move towards
-	protected Node _target = null;
-
-	//The current node the agent is at
-	protected Node currentNode;
 
 	private bool isMoving;
 	public bool IsMoving { get { return isMoving; } }
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// Protected Methods to be inheriteds
+	// ------------------------------------------------
+	protected Node _target = null; //Current target to move towards
+	protected Node currentNode; //The current node the agent is at
+	///
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// Public
+	/// 
 	public SampleNodeGraphAgent(NodeGraph pNodeGraph) : base(pNodeGraph)
 	{
 		SetOrigin(width / 2, height / 2);
@@ -34,35 +39,35 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 
 		pNodeGraph.OnNodeRightClicked += jumpToNode;
 	}
-	protected override void jumpToNode(Node pNode)
-	{
-		base.jumpToNode(pNode);
-		currentNode = pNode;
-	}
+	///
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		protected override void jumpToNode(Node pNode)
+		{
+			base.jumpToNode(pNode);
+			currentNode = pNode;
+		}
 
-	private void _onNodeClickHandler(Node pNode)
-    {
-		// Interrupting the queue
-		if (TargetsQueue.Count > 0 && _target != null) currentNode = _target;
+	// ------------------------------------------------
 
-		TargetsQueue.Clear();
+		private void _onNodeClickHandler(Node pNode)
+		{
+			// Interrupting the queue
+			if (TargetsQueue.Count > 0 && _target != null) currentNode = _target;
 
-		_labelDrawer.clearMark();
+			TargetsQueue.Clear();
 
-		onNodeClickHandler(pNode);
-	}
+			_labelDrawer.clearMark();
 
-	protected abstract void onNodeClickHandler(Node pNode);
-	// 👇👇 for keepsake 👇👇
-	//protected virtual void onNodeClickHandler(Node pNode)
-	//{
-	//	_target = pNode;
-	//}
+			onNodeClickHandler(pNode);
+		}
+
+			protected abstract void onNodeClickHandler(Node pNode);
+
 
 	///////////////////////////////////////////////////////////////
 	// THE UPDATE FUNCTION
-	//
+	// ------------------------------------------------
 	// The Update Function is dedicated to running the queue of the set of movement generated in onNodeClickHandler
 	//  all the set of movement is precalculated in onNodeClickHandler which then the queue will be run in the Update() function.
 
@@ -93,34 +98,53 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 				UpdateOnceArrived();
 
 	}
+	// ------------------------------------------------
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	private void DequeueNextNode()
-	{
-		// Graphic Stuff
+		{
+			// Graphic Stuff
 
-		_labelDrawer.drawQueuePath(TargetsQueue);
+			_labelDrawer.drawQueuePath(TargetsQueue);
 
-		_labelDrawer.markNode(TargetsQueue.Peek());
+			_labelDrawer.markNode(TargetsQueue.Peek());
 
+			if (currentNode != TargetsQueue.Peek() && !currentNode.connections.Contains(TargetsQueue.Peek()))
+			{
+				Console.WriteLine($"WARNING!: At{currentNode} The next target {TargetsQueue.Peek()} is not neighboring node");
 
-		if (currentNode != TargetsQueue.Peek() && !currentNode.connections.Contains(TargetsQueue.Peek()))
+				throw new Exception($"At{currentNode} The next target {TargetsQueue.Peek()} is not neighboring node");
+			}
 			
-			Console.WriteLine($"WARNING!: At{currentNode} The next target {TargetsQueue.Peek()} is not neighboring node");
+			_target = TargetsQueue.Dequeue();
 
-		_target = TargetsQueue.Dequeue();
+			//toggleMovingStatus(true);
+		}
 
-		
-		
-		//toggleMovingStatus(true);
-	}
-	private void UpdateOnceArrived()
-	{
-		_target = null;
-	}
+	// ------------------------------------------------
 
+		private void UpdateOnceArrived()
+		{
+			_target = null;
+
+			AfterFinishQueue();
+		}
+
+			protected virtual void AfterFinishQueue()
+			{
+
+			}
+
+	// ------------------------------------------------
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// DEBUGGING
+	// ------------------------------------------------
 	bool strictDebug = false;
 	protected void toggleMovingStatus(bool b)
-    {
-        if (strictDebug)
+	{
+		if (strictDebug)
 
 			if (isMoving == false && b == true) isMoving = b;
 
@@ -131,5 +155,5 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 		else
 
 			isMoving = b;
-    }
+	}
 }

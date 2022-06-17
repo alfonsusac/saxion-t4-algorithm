@@ -5,19 +5,21 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-class PathFinder_BreadthFirst : PathFinder_Recursive
+class PathFinder_BreadthFirst : SamplePathFinder
 {
 
-	public PathFinder_BreadthFirst(NodeGraph pGraph, bool visualized) : base(pGraph, visualized) {
-	
-	}
+	public PathFinder_BreadthFirst(NodeGraph pGraph, bool visualized) : base(pGraph, visualized) 
+	{ }
 
 	// Data Structure necessary for BFS
 	Dictionary<Node, Node> prevNode;
 	Node lastStartNode;
 
-    // Overriding parent class
-    protected override void initialize(Node start, Node dest)
+	protected void CallfromStack() { callqueue.Dequeue().Run(); }
+	protected Queue<Step> callqueue;
+
+	// Overriding parent class
+	protected override void initialize(Node start, Node dest)
     {
 		// necessary to reset: for encapsulation
 		callqueue = new Queue<Step>();
@@ -65,11 +67,11 @@ class PathFinder_BreadthFirst : PathFinder_Recursive
 		// call returnShortestPath() on the frame where the search is finished.
 	}
 
-	public override List<Node> getShortestPath()
+	protected override List<Node> getShortestPath()
 	{
 		shortestPath = generateShortestPath(destination);
-		
-		return base.getShortestPath();
+
+		return shortestPath;
 	}
 
 
@@ -77,14 +79,14 @@ class PathFinder_BreadthFirst : PathFinder_Recursive
 	// Overriding traverse method
 	protected override void traverse(Node curr, List<Node> path = null, int dist = 0)
 	{
-		diagnostic.traverseCalls++;
+		diagnostic.traverse();
 
 		// Initialize the List if it is called for the first time
 		if (path == null) path = new List<Node>();
 		_labelDrawer.drawPaths(path, curr);
 
 		// Add current node to the traveled path
-		path.Add(curr); diagnostic.nodeVisited++; _labelDrawer.countVisits(curr);
+		path.Add(curr); diagnostic.visitNode(); _labelDrawer.countVisits(curr);
 
 		if (curr.connections.Count != 0)
 			// Iterate to every child
@@ -110,7 +112,8 @@ class PathFinder_BreadthFirst : PathFinder_Recursive
 	protected override void traverseThrough(Node child, List<Node> path, int dist)
 	{
 		new Step(this, child, path, dist + 1);
-		diagnostic.edgeVisited++;
+
+		diagnostic.visitEdge();
 	}
 
 
@@ -134,14 +137,15 @@ class PathFinder_BreadthFirst : PathFinder_Recursive
 			}
             path.Insert(0, curr);
 		}
+
+		
 		
 		return null;
     }
 
 
 
-	protected override void CallfromStack() { callqueue.Dequeue().Run(); }
-	protected Queue<Step> callqueue;
+
 
 	internal class Step : TraverseRecursively
 	{

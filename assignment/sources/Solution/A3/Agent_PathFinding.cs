@@ -10,11 +10,11 @@ using System.Text;
  */
 class Agent_PathFinding : SampleNodeGraphAgent
 {
-	PathFinder_Recursive _pf;
+	SamplePathFinder _pf;
 
 	bool pregenerate = false;
 
-	public Agent_PathFinding(NodeGraph pNodeGraph, PathFinder_Recursive pPathFinder, float _pscale = 1f) : base(pNodeGraph)
+	public Agent_PathFinding(NodeGraph pNodeGraph, SamplePathFinder pPathFinder, float _pscale = 1f) : base(pNodeGraph)
 	{
 		_pf = pPathFinder;
 
@@ -37,6 +37,7 @@ class Agent_PathFinding : SampleNodeGraphAgent
 				_targetsqueue.Enqueue(n);
 
 				Console.WriteLine("Neighbor node found");
+
 				return;
 			}
 
@@ -48,12 +49,10 @@ class Agent_PathFinding : SampleNodeGraphAgent
 
 		// if instantly available, then the PATHFINDER must have generated it in one frame.
 		if (generatedPath != null)
-			
+
 			// if so, iterate every solution and put it into the queue.
-			foreach (Node n in generatedPath)
-				
-				_targetsqueue.Enqueue(n);
-        
+			generatedPath.ForEach(n => _targetsqueue.Enqueue(n));
+
 		// if it returned null. Either PF is running or it is not running
 		else
 			
@@ -77,10 +76,16 @@ class Agent_PathFinding : SampleNodeGraphAgent
         {
 			waitForGeneration = false;
 
-			// Extract the path to the agent's walk queue
-			if(_pf.getShortestPath() != null) foreach (Node n in _pf.getShortestPath())
-				
-				_targetsqueue.Enqueue(n);
+			// Extract the path to the agent's walk queue\
+			if(_pf.GetShortestPath() != null)
+            {
+				_pf.GetShortestPath()?.ForEach(n => _targetsqueue.Enqueue(n));
+
+				if (_pf is PathFinder_BreadthFirst)
+
+					(_pf as PathFinder_BreadthFirst).pregenerate(_pf.Destination);
+			}
+
 
 		}
 
