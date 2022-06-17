@@ -53,22 +53,6 @@ class PathFinder_BreadthFirst : SamplePathFinder
 		return shortestPath;
     }
 
-	protected override void generateWithoutVisual(Node start)
-	{
-		traverse(start, null);
-
-		shortestPath = generateShortestPath(destination);
-	}
-
-	protected override void generateWithVisual(Node start)
-    {
-		traverse(start);
-
-		//new Step(this, start);
-
-		// call returnShortestPath() on the frame where the search is finished.
-	}
-
 	protected override List<Node> getShortestPath()
 	{
 		shortestPath = generateShortestPath(destination);
@@ -79,18 +63,8 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 
 	// Overriding traverse method
-	protected override void traverse(Node curr, List<Node> path = null, int dist = 0)
+	protected override void traverse(Node curr, List<Node> path, int dist = 0)
 	{	
-
-		diagnostic.traverse();
-
-		// Initialize the List if it is called for the first time
-		if (path == null) path = new List<Node>();
-		_labelDrawer.drawPaths(path, curr);
-
-        // Add current node to the traveled path
-        path.Add(curr); diagnostic.visitNode(); _labelDrawer.countVisits(curr);
-
         if (curr.connections.Count != 0)
             // Iterate to every child
             foreach (Node child in curr.connections)

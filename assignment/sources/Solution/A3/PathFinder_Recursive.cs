@@ -43,25 +43,12 @@ class PathFinder_Recursive : SamplePathFinder
 		callstack.Pop().Run();
 	}
 
-	protected override void generateWithVisual(Node start)
-    {
-		new TraverseRecursively(this, start);
-	}
-	protected override void generateWithoutVisual(Node start)
-    {
-		traverse(start, null);
-    }
-
 	protected override void traverse(Node n, List<Node> path, int dist = 0)
     {
-		diagnostic.traverse();
+		Console.Write($"VISINT NODE: {n} | "); path.ForEach(p => Console.WriteLine(p + " ")); Console.WriteLine();
+
 		// Deny entry if destination is null
 		if (destination == null) Console.WriteLine("????");
-
-		// Initialize the List if it is called for the first time
-		if (path == null) path = new List<Node>();
-		_labelDrawer.drawPaths(path, n);
-
 
 		// If this node is the final node, 
 		if (n == destination)
@@ -70,31 +57,25 @@ class PathFinder_Recursive : SamplePathFinder
 			if( dist < shortestDist )
 
 				// then copy path to the global shortestpath
-				markAsShortest(n, dist, path);
+				markAsShortest(dist, path);
 
 			return;
         }
-
-		path.Add(n); diagnostic.visitNode(); _labelDrawer.countVisits(n);
 
 		if (n.connections.Count != 0)
             // Iterate to every unvisted child
             foreach (Node child in n.connections)
 				if (!path.Contains(child))
 					traverseThrough(child, path, dist + 1);
-
-
-		path.RemoveAt(path.Count-1);
-
 	}
 
 	protected override void traverseThrough(Node child, List<Node> path, int dist)
 	{
 		if (destination == null) return;
 
-		if (visualized) new TraverseRecursively(this, child, path, dist + 1); else traverse(child, path, dist + 1);
-		
-		diagnostic.visitEdge();
+		new TraverseRecursively(this, child, path, dist + 1);
+
+		if(!visualized) CallfromStack();
 	}
 	// The way to get shortest path based on the algorithm.
 	protected override List<Node> getShortestPath()
@@ -105,11 +86,10 @@ class PathFinder_Recursive : SamplePathFinder
 	}
 
 
-	private void markAsShortest(Node n, int dist, List<Node> path)
+	private void markAsShortest(int dist, List<Node> path)
     {
         shortestDist = dist;
 		tempShortestPath = new List<Node>(path);
-		tempShortestPath.Add(n);	
     }
 
 

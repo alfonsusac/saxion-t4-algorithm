@@ -9,8 +9,8 @@ using System.Collections.Generic;
 abstract class SampleNodeGraphAgent : NodeGraphAgent
 {
 
-	private bool isMoving;
-	public bool IsMoving { get { return isMoving; } }
+	//private bool isMoving;
+	//public bool IsMoving { get { return isMoving; } }
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// Protected Methods to be inheriteds
@@ -81,17 +81,11 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 	{
 		// FOR EVERY FRAME
 
-		if (_target == null)
-
-			if(_targetsqueue.Count > 0)
+		if (_target == null && _targetsqueue.Count > 0)
 
 				DequeueNextNode();
 
-			else
-
-				toggleMovingStatus(false);
-
-		else //if (_target != null)
+		else if (_target != null)
 
 			if (moveTowardsNode(_target) == isFinished)
 
@@ -140,18 +134,18 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 	/// DEBUGGING
 	// ------------------------------------------------
 	bool strictDebug = false;
-	protected void toggleMovingStatus(bool b)
-	{
-		if (strictDebug)
+	//protected void toggleMovingStatus(bool b)
+	//{
+	//	if (strictDebug)
 
-			if (isMoving == false && b == true) isMoving = b;
+	//		if (isMoving == false && b == true) isMoving = b;
 
-			else if (isMoving == true && b == false) isMoving = b;
+	//		else if (isMoving == true && b == false) isMoving = b;
 
-			else throw new Exception($"isMoving is already at {isMoving}!! (b = {b})");
+	//		else throw new Exception($"isMoving is already at {isMoving}!! (b = {b})");
 
-		else
+	//	else
 
-			isMoving = b;
-	}
+	//		isMoving = b;
+	//}
 }

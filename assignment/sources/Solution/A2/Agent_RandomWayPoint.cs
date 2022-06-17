@@ -16,7 +16,7 @@ class Agent_RandomWayPoint : SampleNodeGraphAgent
 	protected override void onNodeClickHandler(Node pNode)
 	{
 
-		if (IsMoving) return;
+		//if (IsMoving) return;
 		// On Click on the nodes
 		foreach (Node n in currentNode.connections)
 		{
@@ -132,7 +132,7 @@ class Agent_RandomWayPoint : SampleNodeGraphAgent
                 else
                 {
 					Console.WriteLine($"\n.\n.\n.\n\nNode Not Found After a long search??? ");
-					toggleMovingStatus(true);
+					//toggleMovingStatus(true);
 					break;
 				}
 			}

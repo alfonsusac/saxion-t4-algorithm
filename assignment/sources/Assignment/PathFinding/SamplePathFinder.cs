@@ -54,14 +54,13 @@ class SamplePathFinder : PathFinder	{
 		if (visualized)
 		{
 			running = true;
-
-			generateWithVisual(pFrom);
+			traverse(pFrom, new List<Node>());
 
 			return null;
 		}
 		else
 		{
-			generateWithoutVisual(pFrom);
+			traverse(pFrom, new List<Node>());
 
 			return GetShortestPath();
 		}
@@ -91,18 +90,6 @@ class SamplePathFinder : PathFinder	{
 
 	// ------------------------------------------------
 			
-			protected virtual void generateWithVisual(Node pFrom)
-			{
-				throw new NotImplementedException();
-			}	
-	
-			protected virtual void generateWithoutVisual(Node pFrom)
-			{
-				throw new NotImplementedException();
-			}
-
-	// ------------------------------------------------
-
 		public List<Node> GetShortestPath()
 		{
 				if (running == true && visualized) throw new Exception("Machine is Still Running!!");
@@ -203,7 +190,14 @@ class SamplePathFinder : PathFinder	{
 			{ pf.callstack.Push(t); }
 
 		public void Run()
-			{ pf.traverse(currentNode, travelPath, distance); }
+		{
+			pf._labelDrawer.countVisits(currentNode);
+			pf.diagnostic.traverse();
+			travelPath.Add(currentNode);
+			pf._labelDrawer.drawPaths(travelPath, currentNode);
+			pf.traverse(currentNode, travelPath, distance);
+			travelPath.RemoveAt(travelPath.Count - 1);
+		}
 
 		public override string ToString()
 		{

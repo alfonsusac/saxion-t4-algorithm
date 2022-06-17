@@ -26,7 +26,7 @@ class Agent_PathFinding : SampleNodeGraphAgent
 	protected override void onNodeClickHandler(Node pNode)
 	{
 		// To-do clean this up
-		if (IsMoving) return;
+		//if (IsMoving) return;
 
 		// On Click on the nodes
 		// check their immediate neighbors. If yes then move.

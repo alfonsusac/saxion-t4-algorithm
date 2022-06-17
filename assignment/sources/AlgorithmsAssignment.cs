@@ -27,25 +27,26 @@ class AlgorithmsAssignment : Game
 	PathFinder _pathFinder = null;
 
 	//common settings
-	private const int SCALE = 60;       //TODO: experiment with changing this
+	private const int SCALE = 40;       //TODO: experiment with changing this
 	private const int MIN_ROOM_SIZE = 2;	//TODO: use this setting in your dungeon generator
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{
 		System.Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n--------------------------------------");
+		
 		// !!!! Important Toggles: !!!!
 		Dungeon.autoDrawAfterGenerate = false;
 		NodeGraph.doNotDraw = true;
 		NodeGraphAgent.debug = false;
 		NodeLabelDrawer.disableDrawing = false;
-		NodeLabelDrawer.disableLabelDrawing = true;
+		NodeLabelDrawer.disableLabelDrawing = false;
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 		///	BASE SETUP - FEEL FREE TO SKIP
 
 		//set our default background color and title
 
-		GL.ClearColor(1, 1, 1, 1);
+		GL.ClearColor(0, 0, 0, 1);
 		GL.glfwSetWindowTitle("Algorithms Game");
 
 		//The simplest approach to visualize a dungeon, is using black and white squares
@@ -207,8 +208,6 @@ class AlgorithmsAssignment : Game
 		//------------------------------------------------------------------------------------------
 		/// REQUIRED BLOCK OF CODE TO ADD ALL OBJECTS YOU CREATED TO THE SCREEN IN THE CORRECT ORDER
 		/// LOOK BUT DON'T TOUCH :)
-
-
 
 		// THE LABEL DRAWER
         NodeLabelDrawer _nodeLabelDrawer = new NodeLabelDrawer(_graph, _agent);
