@@ -64,7 +64,6 @@ class PathFinder_BreadthFirst : SamplePathFinder
     {
 		traverse(start);
 
-
 		//new Step(this, start);
 
 		// call returnShortestPath() on the frame where the search is finished.
@@ -118,7 +117,6 @@ class PathFinder_BreadthFirst : SamplePathFinder
 	
 	protected override void traverseThrough(Node child, List<Node> path = null, int dist = 0)
 	{
-
 		new Step(this, child, path, dist + 1);
 
 		diagnostic.visitEdge();
