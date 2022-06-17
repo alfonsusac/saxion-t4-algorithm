@@ -62,7 +62,10 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 	protected override void generateWithVisual(Node start)
     {
-		new Step(this, start);
+		traverse(start);
+
+
+		//new Step(this, start);
 
 		// call returnShortestPath() on the frame where the search is finished.
 	}
@@ -78,26 +81,30 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 	// Overriding traverse method
 	protected override void traverse(Node curr, List<Node> path = null, int dist = 0)
-	{
+	{	
+
 		diagnostic.traverse();
 
 		// Initialize the List if it is called for the first time
 		if (path == null) path = new List<Node>();
 		_labelDrawer.drawPaths(path, curr);
 
-		// Add current node to the traveled path
-		path.Add(curr); diagnostic.visitNode(); _labelDrawer.countVisits(curr);
+        // Add current node to the traveled path
+        path.Add(curr); diagnostic.visitNode(); _labelDrawer.countVisits(curr);
 
-		if (curr.connections.Count != 0)
-			// Iterate to every child
-			foreach (Node child in curr.connections)
-				if (!prevNode.ContainsKey(child))
+        if (curr.connections.Count != 0)
+            // Iterate to every child
+            foreach (Node child in curr.connections)
+
+                if (!prevNode.ContainsKey(child))
                 {
 					prevNode[child] = curr;
+
 					traverseThrough(child, path, dist + 1);
 				}
 
-		if (!visualized)
+
+        if (!visualized)
 		{
 			if (callqueue.Count > 0)
 				// iterate to next loop
@@ -109,8 +116,9 @@ class PathFinder_BreadthFirst : SamplePathFinder
 		}
 	}
 	
-	protected override void traverseThrough(Node child, List<Node> path, int dist)
+	protected override void traverseThrough(Node child, List<Node> path = null, int dist = 0)
 	{
+
 		new Step(this, child, path, dist + 1);
 
 		diagnostic.visitEdge();

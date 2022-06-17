@@ -27,8 +27,8 @@ class AlgorithmsAssignment : Game
 	PathFinder _pathFinder = null;
 
 	//common settings
-	private const int SCALE = 20;       //TODO: experiment with changing this
-	private const int MIN_ROOM_SIZE = 3;	//TODO: use this setting in your dungeon generator
+	private const int SCALE = 60;       //TODO: experiment with changing this
+	private const int MIN_ROOM_SIZE = 2;	//TODO: use this setting in your dungeon generator
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{

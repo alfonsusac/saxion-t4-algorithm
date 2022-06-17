@@ -112,8 +112,6 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 			if (currentNode != TargetsQueue.Peek() && !currentNode.connections.Contains(TargetsQueue.Peek()))
 			{
 				Console.WriteLine($"WARNING!: At{currentNode} The next target {TargetsQueue.Peek()} is not neighboring node");
-
-				throw new Exception($"At{currentNode} The next target {TargetsQueue.Peek()} is not neighboring node");
 			}
 			
 			_target = TargetsQueue.Dequeue();

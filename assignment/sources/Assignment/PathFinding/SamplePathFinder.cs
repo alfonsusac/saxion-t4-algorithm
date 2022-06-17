@@ -126,6 +126,7 @@ class SamplePathFinder : PathFinder	{
     {
 		throw new NotImplementedException();
     }
+
 	// ------------------------------------------------
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -201,7 +202,7 @@ class SamplePathFinder : PathFinder	{
 		public virtual void Add(TraverseRecursively t)
 			{ pf.callstack.Push(t); }
 
-		public virtual void Run()
+		public void Run()
 			{ pf.traverse(currentNode, travelPath, distance); }
 
 		public override string ToString()
@@ -215,6 +216,7 @@ class SamplePathFinder : PathFinder	{
 	}
 	// ------------------------------------------------
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 

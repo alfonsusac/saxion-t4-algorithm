@@ -56,7 +56,7 @@ class PathFinder_Recursive : SamplePathFinder
     {
 		diagnostic.traverse();
 		// Deny entry if destination is null
-		if (destination == null) return;
+		if (destination == null) Console.WriteLine("????");
 
 		// Initialize the List if it is called for the first time
 		if (path == null) path = new List<Node>();
@@ -78,13 +78,11 @@ class PathFinder_Recursive : SamplePathFinder
 		path.Add(n); diagnostic.visitNode(); _labelDrawer.countVisits(n);
 
 		if (n.connections.Count != 0)
-        {
             // Iterate to every unvisted child
             foreach (Node child in n.connections)
 				if (!path.Contains(child))
 					traverseThrough(child, path, dist + 1);
 
-		}
 
 		path.RemoveAt(path.Count-1);
 
@@ -92,7 +90,10 @@ class PathFinder_Recursive : SamplePathFinder
 
 	protected override void traverseThrough(Node child, List<Node> path, int dist)
 	{
+		if (destination == null) return;
+
 		if (visualized) new TraverseRecursively(this, child, path, dist + 1); else traverse(child, path, dist + 1);
+		
 		diagnostic.visitEdge();
 	}
 	// The way to get shortest path based on the algorithm.
