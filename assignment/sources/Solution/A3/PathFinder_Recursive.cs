@@ -16,26 +16,20 @@ class PathFinder_Recursive : SamplePathFinder
 	// for recursive stuff
 	private List<Node> tempShortestPath;
 
+    protected Stack<Step> callstack = new Stack<Step>();
 
-	// These are required since the recursion now happens for every frame
-	protected override void initialize(Node start, Node dest)
+
+    // These are required since the recursion now happens for every frame
+    protected override void initialize(Node start, Node dest)
 	{
-		// Diagnostics
-		diagnostic = new BasicDiagnostic();
+		callstack = new Stack<Step>();
+		functionForCallingFromList = CallfromStack;
+		functionCollection = callstack;
 
-		// necessary to reset: initialization
-		destination = dest;
-		shortestDist = int.MaxValue;
-		running = false;
-
-		// Resetting Graphic Stuff
-		_labelDrawer?.clearQueueLabels();
-
+        // necessary to reset: initialization
+        shortestDist = int.MaxValue;
 		tempShortestPath = null;
 
-		functionForCallingFromList = CallfromStack;
-		callstack = new Stack<TraverseRecursively>();
-		functionCollection = callstack;
 	}
 	protected virtual void CallfromStack()
 	{
@@ -47,33 +41,25 @@ class PathFinder_Recursive : SamplePathFinder
     {
 		Console.Write($"VISINT NODE: {n} | "); path.ForEach(p => Console.WriteLine(p + " ")); Console.WriteLine();
 
-		// Deny entry if destination is null
-		if (destination == null) Console.WriteLine("????");
-
-		// If this node is the final node, 
-		if (n == destination)
-        {
-			// If the distance to this node is the shortest node.
-			if( dist < shortestDist )
-
-				// then copy path to the global shortestpath
-				markAsShortest(dist, path);
-
-			return;
-        }
-
 		if (n.connections.Count != 0)
-            // Iterate to every unvisted child
-            foreach (Node child in n.connections)
+
+			// Iterate to every unvisted child
+			foreach (Node child in n.connections)
+
 				if (!path.Contains(child))
-					traverseThrough(child, path, dist + 1);
+
+					if (n == destination && dist + 1 < shortestDist)
+
+						markAsShortest(dist + 1, path);
+
+					else
+
+						traverseThrough(child, path, dist + 1);
 	}
 
 	protected override void traverseThrough(Node child, List<Node> path, int dist)
 	{
-		if (destination == null) return;
-
-		new TraverseRecursively(this, child, path, dist + 1);
+		new Step(this, child, path, dist + 1);
 
 		if(!visualized) CallfromStack();
 	}
@@ -82,6 +68,7 @@ class PathFinder_Recursive : SamplePathFinder
 	{
 		// bcs recursive path finder has to manually udpate ShortestPath.
 		shortestPath = tempShortestPath;
+
 		return shortestPath;
 	}
 
@@ -95,6 +82,15 @@ class PathFinder_Recursive : SamplePathFinder
 
 	//////////////////////////////////////////////////////////////////////////////
 	// for visualization
+	internal class Step : TraverseRecursively
+	{
+		public Step(PathFinder_Recursive r, Node n, List<Node> l = null, int i = 0)
+			: base(r, n, l, i) { }
 
+		public override void Add(TraverseRecursively t)
+		{
+			(pf as PathFinder_Recursive).callstack.Push(t as Step);
+		}
+	}
 }
 

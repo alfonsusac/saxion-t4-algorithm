@@ -25,9 +25,6 @@ class Agent_PathFinding : SampleNodeGraphAgent
 
 	protected override void onNodeClickHandler(Node pNode)
 	{
-		// To-do clean this up
-		//if (IsMoving) return;
-
 		// On Click on the nodes
 		// check their immediate neighbors. If yes then move.
 		foreach (Node n in currentNode.connections)
@@ -41,9 +38,6 @@ class Agent_PathFinding : SampleNodeGraphAgent
 				return;
 			}
 
-
-
-		
 
 		List<Node> generatedPath = _pf.Generate(currentNode, pNode);
 

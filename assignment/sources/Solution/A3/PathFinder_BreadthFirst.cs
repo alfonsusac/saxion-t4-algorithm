@@ -26,9 +26,9 @@ class PathFinder_BreadthFirst : SamplePathFinder
 		functionForCallingFromList = CallfromStack;
 		functionCollection = callqueue;
 
-		if (lastStartNode != start || prevNode == null)
-			prevNode = new Dictionary<Node, Node>();
-			prevNode[start] = null;
+		prevNode = new Dictionary<Node, Node>();
+
+		prevNode[start] = null;
 	}
 
 	public void pregenerate(Node start)
@@ -55,9 +55,27 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 	protected override List<Node> getShortestPath()
 	{
-		shortestPath = generateShortestPath(destination);
+		if (destination == null) return null; //for pregenerated paths
 
-		return shortestPath;
+		Node curr = destination;
+
+		List<Node> path = new List<Node>();
+
+		path.Insert(0, curr);
+
+		while (prevNode.ContainsKey(curr))
+		{
+			//Console.WriteLine($"Curr {curr} <- Prev {prevNode[curr]}");
+			curr = prevNode[curr];
+			if (curr == null)
+			{
+				lastStartNode = path[0];
+				return path;
+			}
+			path.Insert(0, curr);
+		}
+
+		return null;
 	}
 
 
@@ -73,20 +91,20 @@ class PathFinder_BreadthFirst : SamplePathFinder
                 {
 					prevNode[child] = curr;
 
-					traverseThrough(child, path, dist + 1);
+					new Step(this, child, path, dist + 1);
 				}
 
+		iterateNext();
+	}
+	protected virtual void iterateNext()
+    {
+		if (!visualized)
 
-        if (!visualized)
-		{
 			if (callqueue.Count > 0)
 				// iterate to next loop
 				CallfromStack();
-            else
-            {
+			else
 				getShortestPath();
-			}
-		}
 	}
 	
 	protected override void traverseThrough(Node child, List<Node> path = null, int dist = 0)

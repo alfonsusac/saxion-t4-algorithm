@@ -17,8 +17,8 @@ class SamplePathFinder : PathFinder	{
 	protected List<Node> shortestPath;  
 	protected bool running;				// Running Status for Frame Delegation
 	protected Action functionForCallingFromList;
-	protected Stack<TraverseRecursively> callstack = new Stack<TraverseRecursively>();
-	protected IEnumerable<TraverseRecursively> functionCollection;
+    //protected Stack<TraverseRecursively> callstack = new Stack<TraverseRecursively>();
+    protected IEnumerable<TraverseRecursively> functionCollection;
 	///
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -82,7 +82,6 @@ class SamplePathFinder : PathFinder	{
 
 			// check for completeness
 			if (functionForCallingFromList == null) throw new NotImplementedException();
-			if (callstack == null) throw new NotImplementedException();
 			if (functionCollection == null) throw new NotImplementedException();
 	}
 
@@ -92,7 +91,7 @@ class SamplePathFinder : PathFinder	{
 			
 		public List<Node> GetShortestPath()
 		{
-				if (running == true && visualized) throw new Exception("Machine is Still Running!!");
+				//if (running == true && visualized) throw new Exception("Machine is Still Running!!");
 
 			List<Node> generatedPath = getShortestPath();
 
@@ -149,15 +148,15 @@ class SamplePathFinder : PathFinder	{
 
 					Console.WriteLine(GetType().Name + ".Generate: Path generated.");
 
-					getShortestPath();
+					GetShortestPath();
 
-					// apply the last calculated path AND draw it
-					_lastCalculatedPath = shortestPath;
+                    // apply the last calculated path AND draw it
+                    _lastCalculatedPath = shortestPath;
 
-					draw();
+                    draw();
 
-					// turn the machine off!
-					running = false;
+                    // turn the machine off!
+                    running = false;
 				}
 			}
 		}
@@ -170,7 +169,7 @@ class SamplePathFinder : PathFinder	{
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// The "Function" Class
 	// ------------------------------------------------
-	internal class TraverseRecursively
+	abstract internal class TraverseRecursively
 	{
 		readonly Node currentNode;
 		readonly List<Node> travelPath;
@@ -186,8 +185,11 @@ class SamplePathFinder : PathFinder	{
 			if (l != null) travelPath = new List<Node>(l); else travelPath = new List<Node>();
 			distance = i;
 		}
+
 		public virtual void Add(TraverseRecursively t)
-			{ pf.callstack.Push(t); }
+        {
+			throw new NotImplementedException();
+        }
 
 		public void Run()
 		{
@@ -195,7 +197,9 @@ class SamplePathFinder : PathFinder	{
 			pf.diagnostic.traverse();
 			travelPath.Add(currentNode);
 			pf._labelDrawer.drawPaths(travelPath, currentNode);
+
 			pf.traverse(currentNode, travelPath, distance);
+			
 			travelPath.RemoveAt(travelPath.Count - 1);
 		}
 

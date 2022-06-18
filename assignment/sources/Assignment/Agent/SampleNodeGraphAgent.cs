@@ -133,7 +133,8 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// DEBUGGING
 	// ------------------------------------------------
-	bool strictDebug = false;
+	//bool strictDebug = false;
+
 	//protected void toggleMovingStatus(bool b)
 	//{
 	//	if (strictDebug)
