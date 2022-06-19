@@ -45,7 +45,6 @@ class AlgorithmsAssignment : Game
 		///	BASE SETUP - FEEL FREE TO SKIP
 
 		//set our default background color and title
-
 		GL.ClearColor(0, 0, 0, 1);
 		GL.glfwSetWindowTitle("Algorithms Game");
 
@@ -56,7 +55,6 @@ class AlgorithmsAssignment : Game
 		//
 		//To visualize where these scaled pixels are we also add a grid, where we use
 		//this same SCALE value as a grid size setting. Comment out the next line to hide it.
-
 		Grid grid = new Grid(width, height, SCALE);
 
 		/////////////////////////////////////////////////////////////////////////////////////////
@@ -76,29 +74,20 @@ class AlgorithmsAssignment : Game
 		//Eg walls are SCALE pixels thick, doors are squares with an area of SCALE * SCALE pixels.
 		Size size = new Size(width / SCALE, height / SCALE);
 
-        ////////////////////////////////////////
-        //Assignment 1.1 Sufficient (Mandatory)
-        //
-        //TODO: Study assignment 1.1 on blackboard
-        //TODO: Study the Dungeon, Room and Door classes
-        //TODO: Study the SampleDungeon class and try it out below
-        //TODO: Comment out SampleDungeon below, implement a SufficientDungeon class and uncomment it below
-
-        //_dungeon = new SampleDungeon(size);
+		////////////////////////////////////////
+		//Assignment 1.1 Sufficient (Mandatory)
+		//---------------------------------------------------
+		//_dungeon = new SampleDungeon(size);
 		//_dungeon = new SufficientDungeon(size);
 
 		/////////////////////////////////
 		//Assignment 1.2 Good (optional)
-		//
-		//TODO: Study assignment 1.2 on blackboard
-		//TODO: Comment out SufficientDungeon above, implement a GoodDungeon class, and uncomment it below
+		//---------------------------------------------------
 		//_dungeon = new GoodDungeon(size);
 
 		//////////////////////////////////////
 		//Assignment 1.3 Excellent (optional)
-		//
-		//TODO: Study assignment 1.3 on blackboard
-		//TODO: Comment out GoodDungeon above, implement an ExcellentDungeon class, and uncomment it below
+		//---------------------------------------------------
 		_dungeon = new ExcellentDungeon(size);
 
         if (_dungeon != null)
@@ -106,7 +95,6 @@ class AlgorithmsAssignment : Game
 			//assign the SCALE we talked about above, so that it no longer looks like a tinietiny stamp:
 			_dungeon.scale = SCALE;
 			//Tell the dungeon to generate rooms and doors with the given MIN_ROOM_SIZE
-			//new Thread( ()=>_dungeon.Generate(MIN_ROOM_SIZE) ).Start();
 			_dungeon.Generate(MIN_ROOM_SIZE);
 		}
 
@@ -117,12 +105,7 @@ class AlgorithmsAssignment : Game
 
 		/////////////////////////////////////////////////////////////
 		//Assignment 2.1 Sufficient (Mandatory) High Level NodeGraph
-		//
-		//TODO: Study assignment 2.1 on blackboard
-		//TODO: Study the NodeGraph and Node classes
-		//TODO: Study the SampleDungeonNodeGraph class and try it out below
-		//TODO: Comment out the SampleDungeonNodeGraph again, implement a HighLevelDungeonNodeGraph class and uncomment it below
-
+		// ---------------------------------------------------			
 		//_graph = new SampleDungeonNodeGraph(_dungeon);
 		//_graph = new HighLevelDungeonNodeGraph(_dungeon);
 		_graph = new NodeGraph_LowLevelDungeon(_dungeon);
@@ -131,22 +114,13 @@ class AlgorithmsAssignment : Game
 
 		/////////////////////////////////////////////////////////////
 		//Assignment 2.1 Sufficient (Mandatory) OnGraphWayPointAgent
-		//
-		//TODO: Study the NodeGraphAgent class
-		//TODO: Study the SampleNodeGraphAgent class and try it out below
-		//TODO: Comment out the SampleNodeGraphAgent again, implement an OnGraphWayPointAgent class and uncomment it below
-
+		// ---------------------------------------------------			
 		//_agent = new SampleNodeGraphAgent(_graph);
 		//_agent = new OnGraphWayPointAgent(_graph);
 
 		////////////////////////////////////////////////////////////
 		//Assignment 2.2 Good (Optional) TiledView
-		//
-		//TODO: Study assignment 2.2 on blackboard
-		//TODO: Study the TiledView and TileType classes
-		//TODO: Study the SampleTileView class and try it out below
-		//TODO: Comment out the SampleTiledView again, implement the TiledDungeonView and uncomment it below
-
+		// ---------------------------------------------------		
 		//_tiledView = new SampleTiledView(_dungeon, TileType.GROUND);
 		_tiledView = new TiledDungeonView(_dungeon, TileType.GROUND); 
 		if (_tiledView != null) _tiledView.Generate();
@@ -158,42 +132,30 @@ class AlgorithmsAssignment : Game
 
 		////////////////////////////////////////////////////////////
 		//Assignment 2.2 Good (Optional) RandomWayPointAgent
-		//
-		//TODO: Comment out the OnGraphWayPointAgent above, implement a RandomWayPointAgent class and uncomment it below
-
+		// ---------------------------------------------------		
 		//_agent = new RandomWayPointAgent(_graph);
-        //_agent2 = new RandomWayPointAgent(_graph, -1.0f);
-        //_agent3 = new RandomWayPointAgent(_graph, -2f);
+		//_agent2 = new RandomWayPointAgent(_graph, -1.0f);
+		//_agent3 = new RandomWayPointAgent(_graph, -2f);
 
-        //////////////////////////////////////////////////////////////
-        //Assignment 2.3 Excellent (Optional) LowLevelDungeonNodeGraph
-        //
-        //TODO: Comment out the HighLevelDungeonNodeGraph above, and implement the LowLevelDungeonNodeGraph 
+		//////////////////////////////////////////////////////////////
+		//Assignment 2.3 Excellent (Optional) LowLevelDungeonNodeGraph
+		// ---------------------------------------------------		
 
-        /////////////////////////////////////////////////////////////////////////////////////////
-        /// ASSIGNMENT 3 : PathFinding and PathFindingAgents
-        ///							
-        /// SKIP THIS BLOCK UNTIL YOU'VE FINISHED ASSIGNMENT 2 AND ASKED FOR TEACHER FEEDBACK !
+		/////////////////////////////////////////////////////////////////////////////////////////
+		/// ASSIGNMENT 3 : PathFinding and PathFindingAgents
+		///							
+		/// SKIP THIS BLOCK UNTIL YOU'VE FINISHED ASSIGNMENT 2 AND ASKED FOR TEACHER FEEDBACK !
 
-        //////////////////////////////////////////////////////////////////////////
-        //Assignment 3.1 Sufficient (Mandatory) - Recursive Pathfinding
-        //
-        //TODO: Study assignment 3.1 on blackboard
-        //TODO: Study the PathFinder class
-        //TODO: Study the SamplePathFinder class and try it out
-        //TODO: Comment out the SamplePathFinder, implement a PathFinder_Recursive and uncomment it below
-
-        //_pathFinder = new SamplePathFinder(_graph);
-	//	_pathFinder = new PathFinder_Recursive(_graph, true);
-		//new Thread( e=> new PathFinder_Recursive(_graph) ).Start();
+		//////////////////////////////////////////////////////////////////////////
+		//Assignment 3.1 Sufficient (Mandatory) - Recursive Pathfinding
+		// ---------------------------------------------------	
+		//_pathFinder = new SamplePathFinder(_graph);
+		//	_pathFinder = new PathFinder_Recursive(_graph, true);
 
 		//////////////////////////////////////////////////////////////////////////
 		//Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
-		//
-		//TODO: Comment out the PathFinder_Recursive above, implement a BreadthFirstPathFinder and uncomment it below
-		_pathFinder = new PathFinder_BreadthFirst(_graph, true);
-
-		//TODO: Implement a PathFindingAgent that uses one of your pathfinder implementations (should work with any pathfinder implementation)
+		// ---------------------------------------------------	
+		_pathFinder = new PathFinder_BreadthFirst(_graph, false, true);
 		_agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
 
 		/////////////////////////////////////////////////
@@ -204,6 +166,7 @@ class AlgorithmsAssignment : Game
 		//For example for A*, you must choose a setup in which it is possible to demonstrate your 
 		//algorithm works. Find the best place to add your code, and don't forget to move the
 		//PathFindingAgent below the creation of your PathFinder!
+		//_pathFinder = new PathFinder_Dijkstra(_graph, true);
 
 		//------------------------------------------------------------------------------------------
 		/// REQUIRED BLOCK OF CODE TO ADD ALL OBJECTS YOU CREATED TO THE SCREEN IN THE CORRECT ORDER

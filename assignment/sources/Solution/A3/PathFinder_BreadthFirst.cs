@@ -1,14 +1,10 @@
-﻿using GXPEngine;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
+﻿using System.Collections.Generic;
+
 
 class PathFinder_BreadthFirst : SamplePathFinder
 {
 
-	public PathFinder_BreadthFirst(NodeGraph pGraph, bool visualized) : base(pGraph, visualized) 
+	public PathFinder_BreadthFirst(NodeGraph pGraph, bool visualized, bool pregenerate) : base(pGraph, visualized) 
 	{ }
 
 	// Data Structure necessary for BFS
@@ -91,7 +87,9 @@ class PathFinder_BreadthFirst : SamplePathFinder
                 {
 					prevNode[child] = curr;
 
-					new Step(this, child, path, dist + 1);
+					if (destination == null || (child != destination && !prevNode.ContainsKey(destination)) )
+
+						new Step(this, child, path, dist + 1);
 				}
 
 		iterateNext();

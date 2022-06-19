@@ -57,6 +57,7 @@ class Agent_PathFinding : SampleNodeGraphAgent
 
 	protected override void Update()
     {
+		// if pregenerate is true, then generate the path at end node.
 		if (pregenerate == true)
         {
 			pregenerate = false;
@@ -66,6 +67,12 @@ class Agent_PathFinding : SampleNodeGraphAgent
 				(_pf as PathFinder_BreadthFirst).pregenerate(currentNode);
 		}
 
+		if (waitForGeneration)
+        {
+
+        }
+
+		// if we are waiting for generation to complete,  and pf is NO LONGER running, then get shortest path
         if (waitForGeneration && !_pf.IsRunning)
         {
 			waitForGeneration = false;
