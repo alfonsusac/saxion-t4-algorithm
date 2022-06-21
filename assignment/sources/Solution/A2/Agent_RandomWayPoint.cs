@@ -18,7 +18,7 @@ class Agent_RandomWayPoint : SampleNodeGraphAgent
 
 		//if (IsMoving) return;
 		// On Click on the nodes
-		foreach (Node n in currentNode.connections)
+		foreach (Node n in currentNode.active_connections)
 		{
 			if (n.location == pNode.location)
 			{
@@ -70,16 +70,16 @@ class Agent_RandomWayPoint : SampleNodeGraphAgent
 				break;
 			}
 
-			P($"Node {curr.id}: Child Nodes: [ {string.Join(" ", curr.connections)} ]");
+			P($"Node {curr.id}: Child Nodes: [ {string.Join(" ", curr.active_connections)} ]");
 
 			// check if this node has any explorable nodes : HAVE NOT been visited before, and IS NOT IN THE STACK
 			bool explorable = false;
 
 			// for randomization
 			Random r = new Random();
-			List<Node> connectionsCopy = new List<Node>(curr.connections);
+			List<Node> connectionsCopy = new List<Node>(curr.active_connections);
 
-			for(int i = 0; i < curr.connections.Count; i++)
+			for(int i = 0; i < curr.active_connections.Count; i++)
 			//foreach (Node n in curr.connections)
 			{
 

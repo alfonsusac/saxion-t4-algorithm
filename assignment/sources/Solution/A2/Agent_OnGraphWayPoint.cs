@@ -43,7 +43,7 @@ class Agent_OnGraphWayPoint : NodeGraphAgent
 
 
 		// Check if the clicked nodes are the neighboring, reachable nodes from current node
-		if (lastlyAddedNode.connections.Contains(pNode) )
+		if (lastlyAddedNode.isNeighbor(pNode) )
         {
 			// If yes, queue the clicked nodes.
 			_targetsqueue.Enqueue(pNode);

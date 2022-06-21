@@ -8,11 +8,11 @@ class PathFinder_BreadthFirst : SamplePathFinder
 	{ }
 
 	// Data Structure necessary for BFS
-	Dictionary<Node, Node> prevNode;
+	protected Dictionary<Node, Node> prevNodes;
 	Node lastStartNode;
 
-	protected void CallfromStack() { callqueue.Dequeue().Run(); }
 	protected Queue<Step> callqueue;
+	protected virtual void CallfromStack() { callqueue.Dequeue().Run(); }
 
 	// Overriding parent class
 	protected override void initialize(Node start, Node dest)
@@ -22,9 +22,9 @@ class PathFinder_BreadthFirst : SamplePathFinder
 		functionForCallingFromList = CallfromStack;
 		functionCollection = callqueue;
 
-		prevNode = new Dictionary<Node, Node>();
+		prevNodes = new Dictionary<Node, Node>();
 
-		prevNode[start] = null;
+		prevNodes[start] = null;
 	}
 
 	public void pregenerate(Node start)
@@ -59,10 +59,10 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 		path.Insert(0, curr);
 
-		while (prevNode.ContainsKey(curr))
+		while (prevNodes.ContainsKey(curr))
 		{
-			//Console.WriteLine($"Curr {curr} <- Prev {prevNode[curr]}");
-			curr = prevNode[curr];
+			//Console.WriteLine($"Curr {curr} <- Prev {prevNodes[curr]}");
+			curr = prevNodes[curr];
 			if (curr == null)
 			{
 				lastStartNode = path[0];
@@ -77,17 +77,17 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 
 	// Overriding traverse method
-	protected override void traverse(Node curr, List<Node> path, int dist = 0)
+	protected override void traverse(Node curr, List<Node> path, double dist = 0)
 	{	
-        if (curr.connections.Count != 0)
+        if (!curr.isolated)
             // Iterate to every child
-            foreach (Node child in curr.connections)
+            foreach (Node child in curr.active_connections)
 
-                if (!prevNode.ContainsKey(child))
+                if (!prevNodes.ContainsKey(child))
                 {
-					prevNode[child] = curr;
+					prevNodes[child] = curr;
 
-					if (destination == null || (child != destination && !prevNode.ContainsKey(destination)) )
+					if (destination == null || (child != destination && !prevNodes.ContainsKey(destination)) )
 
 						new Step(this, child, path, dist + 1);
 				}
@@ -105,11 +105,9 @@ class PathFinder_BreadthFirst : SamplePathFinder
 				getShortestPath();
 	}
 	
-	protected override void traverseThrough(Node child, List<Node> path = null, int dist = 0)
+	protected override void traverseThrough(Node child, List<Node> path = null, double dist = 0)
 	{
-		new Step(this, child, path, dist + 1);
 
-		diagnostic.visitEdge();
 	}
 
 
@@ -122,10 +120,10 @@ class PathFinder_BreadthFirst : SamplePathFinder
 		List<Node> path = new List<Node>();
 		path.Insert(0, curr);
 
-		while (prevNode.ContainsKey(curr))
+		while (prevNodes.ContainsKey(curr))
         {
-			//Console.WriteLine($"Curr {curr} <- Prev {prevNode[curr]}");
-			curr = prevNode[curr];
+			//Console.WriteLine($"Curr {curr} <- Prev {prevNodes[curr]}");
+			curr = prevNodes[curr];
 			if (curr == null)
 			{
 				lastStartNode = path[0];
@@ -145,12 +143,12 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 	internal class Step : TraverseRecursively
 	{
-		public Step(PathFinder_BreadthFirst r, Node n, List<Node> l = null, int i = 0)
+		public Step(PathFinder_BreadthFirst r, Node n, List<Node> l = null, double i = 0)
 			: base(r,n,l,i){ }
 
-		public override void Add(TraverseRecursively t)
+		public override void Add()
 		{
-			(pf as PathFinder_BreadthFirst).callqueue.Enqueue(t as Step);
+			(pf as PathFinder_BreadthFirst).callqueue.Enqueue(this);
 		}
 	}
 

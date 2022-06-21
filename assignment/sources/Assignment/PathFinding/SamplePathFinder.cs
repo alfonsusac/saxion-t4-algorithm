@@ -108,7 +108,7 @@ class SamplePathFinder : PathFinder	{
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// TRAVERSE THE PATH -> AFTER GENERATING
 	// ------------------------------------------------
-	protected virtual void traverse(Node n, List<Node> path, int dist = 0)
+	protected virtual void traverse(Node n, List<Node> path, double dist = 0)
     {
 		throw new NotImplementedException();
     }
@@ -116,7 +116,7 @@ class SamplePathFinder : PathFinder	{
 	// ------------------------------------------------
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		protected virtual void traverseThrough(Node child, List<Node> path, int dist)
+		protected virtual void traverseThrough(Node child, List<Node> path, double dist)
 		{
 			throw new NotImplementedException();
 		}
@@ -125,40 +125,78 @@ class SamplePathFinder : PathFinder	{
 	/// TRAVERSE THE PATH -> AFTER GENERATING
 	// ------------------------------------------------
 	protected int lastRun;
+	bool paused = false;
+	bool step = false;
+	int updateTime = 1000;
+	const int updatePerFrame = 5;
 	protected override void iterateSteps()
     {
+		if( Input.GetKey(Key.O))
+        {
+			updateTime = 1;
+        }
+        else
+        {
+			updateTime = 1000;
+        }
+
+		if(Input.GetKeyDown(Key.P))
+        {
+			if (paused) paused = false;
+			else paused = true;
+			Console.WriteLine($"Pause = {paused} ");
+        }
+        if (paused)
+        {
+            if (Input.GetKeyDown(Key.I))
+            {
+				step = true;
+			}
+        }
+
+
 		// Only do this if its visualzied.
 		if (visualized)
 		{
 			// Delay the visualization
 			if (lastRun == 0) lastRun = Time.now;
-			if (Time.now - lastRun > 0 && functionCollection != null)
-			{
-				lastRun = Time.now;
+			if( functionCollection != null)
 
-				// If there is something in the stack? then call it.
-				if (_labelDrawer != null && funcCollectionCount() > 0)
-
-					functionForCallingFromList();
-
-				// If the Recursion is finally done
-				if (running == true && funcCollectionCount() == 0)
+				// when it is time,,
+				if (((Time.now - lastRun > updateTime) && !paused) || step)
 				{
-					diagnostic.end();
+					step = false;
+					lastRun = Time.now;
 
-					Console.WriteLine(GetType().Name + ".Generate: Path generated.");
+					for(int i = 0; i < updatePerFrame; i++)
+                    {
+						if(updateTime != 1) i = updatePerFrame - 1;
 
-					GetShortestPath();
+						// If there is something in the stack? then call it.
+						if (_labelDrawer != null && funcCollectionCount() > 0)
 
-                    // apply the last calculated path AND draw it
-                    _lastCalculatedPath = shortestPath;
+							functionForCallingFromList();
 
-                    draw();
+						// If the Recursion is finally done
+						if (running == true && funcCollectionCount() == 0)
+						{
+							diagnostic.end();
 
-                    // turn the machine off!
-                    running = false;
+							Console.WriteLine(GetType().Name + ".Generate: Path generated.");
+
+							GetShortestPath();
+
+							// apply the last calculated path AND draw it
+							_lastCalculatedPath = shortestPath;
+
+							draw();
+
+							// turn the machine off!
+							running = false;
+						}
+					}
+
 				}
-			}
 		}
 	}
 	protected virtual int funcCollectionCount() { return functionCollection.Count(); }
@@ -171,22 +209,23 @@ class SamplePathFinder : PathFinder	{
 	// ------------------------------------------------
 	abstract internal class TraverseRecursively
 	{
-		readonly Node currentNode;
-		readonly List<Node> travelPath;
-		readonly int distance;
-		readonly protected SamplePathFinder pf;
+		public readonly Node currentNode;
+		protected readonly List<Node> travelPath;
+		public readonly double distance;
+		protected readonly SamplePathFinder pf;
 
-		public TraverseRecursively(SamplePathFinder r, Node n, List<Node> l = null, int i = 0)
+		public TraverseRecursively(SamplePathFinder r, Node n, List<Node> l = null, double i = 0)
 		{
 			pf = r;
-			Add(this);
 
 			currentNode = n;
 			if (l != null) travelPath = new List<Node>(l); else travelPath = new List<Node>();
 			distance = i;
+
+			Add();
 		}
 
-		public virtual void Add(TraverseRecursively t)
+		public virtual void Add()
         {
 			throw new NotImplementedException();
         }

@@ -15,12 +15,11 @@ class NodeLabelDrawer : Canvas
 	private bool _smallMode = true;
 
 	private NodeGraph _graph = null;
-	private NodeGraphAgent _agent = null;
 
 	public static bool disableDrawing = false;
 	public static bool disableLabelDrawing = true;
 
-	public NodeLabelDrawer(NodeGraph pNodeGraph, NodeGraphAgent pNodeGraphAgent) : base(pNodeGraph.width, pNodeGraph.height)
+	public NodeLabelDrawer(NodeGraph pNodeGraph) : base(pNodeGraph.width, pNodeGraph.height)
 	{
 		Console.WriteLine("\n-----------------------------------------------------------------------------");
 		Console.WriteLine("NodeLabelDrawer created.");
@@ -29,7 +28,6 @@ class NodeLabelDrawer : Canvas
 
 		_labelFont = new Font(SystemFonts.DefaultFont.FontFamily, Math.Min(_smallMode ? pNodeGraph.nodeSize : pNodeGraph.nodeSize * 2, 12));
 		_graph = pNodeGraph;
-		_agent = pNodeGraphAgent;
 
 		if(!disableDrawing) drawLabels();
 	}
@@ -39,14 +37,23 @@ class NodeLabelDrawer : Canvas
 	///							
 
 	//this has to be virtual otherwise the subclass won't pick it up
+
+	bool _showRegionColors = true;
 	protected virtual void Update()
 	{
 		//toggle label display when L is pressed
+		//drawConnectedRooms();
 		if (Input.GetKeyDown(Key.L))
 		{
 			_showLabels = !_showLabels;
 			graphics.Clear(Color.Transparent);
 			if (_showLabels && !disableDrawing) drawLabels();
+		}
+		if (Input.GetKeyDown(Key.M))
+        {
+			_showRegionColors = !_showRegionColors;
+			graphics.Clear(Color.Transparent);
+			if (_showRegionColors && !disableDrawing) drawConnectedRooms2();
 		}
 	}
 
@@ -130,11 +137,15 @@ class NodeLabelDrawer : Canvas
 		graphics.DrawString("" + visitedCount[pNode], _labelFont, Brushes.Blue, pNode.location.X, pNode.location.Y - size.Height / 2 - 20);
 	}
 
-	private int nodeSize = 5;
-	private float tileSize { get { return nodeSize * 1.2f; } }
-	public void setNodeSize(int i)
+	private static int nodeSize = 5;
+	private static float tileSize;
+	public static void setNodeSize(int i)
     {
 		nodeSize = i + 2;
+    }	
+	public static void setTileSize(int i)
+    {
+		tileSize = i;
     }
 
 	List<Node> marked;
@@ -191,5 +202,41 @@ class NodeLabelDrawer : Canvas
 		graphics.DrawString(pNode.id, _labelFont, b, pNode.location.X - size.Width / 2 - 20, pNode.location.Y - size.Height / 2 - 20);
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////
+	/// Nodegraph  visualization helper methods
+	Random r = new Random();
+	Dictionary<int, Color> mappedColors = new Dictionary<int, Color>();
+	internal virtual void drawConnectedRooms2()
+    {
+		graphics.Clear(Color.Transparent);
 
+		Dictionary<Node, int> visitedNodes = (_graph as NodeGraph_LowLevelDungeon).visitedNodes;
+		Console.WriteLine("DrawRoommms");
+
+		foreach (Node m in _graph.nodes)
+        {
+			if(m.disabled)
+            {
+				graphics.FillRectangle(
+					brush: new SolidBrush(Color.Black),
+						x: m.location.X - tileSize / 2,
+						y: m.location.Y - tileSize / 2,
+						width: tileSize,
+						height: tileSize);
+				continue;
+			}
+
+			int thiscolorid = visitedNodes[m];
+
+			if (!mappedColors.ContainsKey(thiscolorid))
+				mappedColors[thiscolorid] = Color.FromArgb(r.Next(255), r.Next(255), r.Next(255));
+
+			graphics.FillRectangle(
+				brush: new SolidBrush(Color.FromArgb(200, mappedColors[thiscolorid])),
+				x: m.location.X - tileSize/2,
+				y: m.location.Y - tileSize/2,
+				width: tileSize,
+				height: tileSize);
+		}
+	}
 }

@@ -27,7 +27,7 @@ class Agent_PathFinding : SampleNodeGraphAgent
 	{
 		// On Click on the nodes
 		// check their immediate neighbors. If yes then move.
-		foreach (Node n in currentNode.connections)
+		foreach (Node n in currentNode.active_connections)
 
 			if (n.location == pNode.location)
 			{

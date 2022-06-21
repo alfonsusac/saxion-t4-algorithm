@@ -24,6 +24,8 @@ abstract class NodeGraph : Canvas
 	public Action<Node> OnNodeRightClicked = delegate { };
 	public Action<Node> OnNodeShiftLeftClicked = delegate { };
 	public Action<Node> OnNodeShiftRightClicked = delegate { };
+	public Action<Node> OnNodeLeftClickedWhileHoldDKey = delegate { };
+	public Action<Node> OnNodeRightClickedWhileHoldDKey = delegate { };
 
 	//required for node highlighting on mouse over
 	private Node _nodeUnderMouse = null;
@@ -34,6 +36,8 @@ abstract class NodeGraph : Canvas
 	private Pen _outlinePen = new Pen(Color.Black, 2.1f);
 	private Brush _defaultNodeColor = Brushes.CornflowerBlue;
 	private Brush _highlightedNodeColor = Brushes.Cyan;
+	private Brush _defaultDisabledNodeColor = Brushes.Gray;
+	private Brush _highlightedDisabledodeColor = Brushes.LightGray;
 
 	// Addition
 	public static bool doNotDraw { get; set; }
@@ -58,8 +62,8 @@ abstract class NodeGraph : Canvas
 	{
 		if (nodes.Contains(pNodeA) && nodes.Contains(pNodeB))
 		{
-			if (!pNodeA.connections.Contains(pNodeB)) pNodeA.connections.Add(pNodeB);
-			if (!pNodeB.connections.Contains(pNodeA)) pNodeB.connections.Add(pNodeA);
+			if (!pNodeA.all_connections.Contains(pNodeB)) pNodeA.all_connections.Add(pNodeB);
+			if (!pNodeB.all_connections.Contains(pNodeA)) pNodeB.all_connections.Add(pNodeA);
         }
         else
         {
@@ -100,7 +104,12 @@ abstract class NodeGraph : Canvas
 
 	protected virtual void drawNodes()
 	{
-		foreach (Node node in nodes) drawNode(node, _defaultNodeColor);
+		foreach (Node node in nodes)
+		{
+			if (!node.disabled) drawNode(node, _defaultNodeColor);
+			if (node.disabled) 
+				drawNode(node, _defaultDisabledNodeColor);
+		}
 	}
 
 	protected virtual void drawNode(Node pNode, Brush pColor)
@@ -137,7 +146,7 @@ abstract class NodeGraph : Canvas
 
 	protected virtual void drawNodeConnections(Node pNode)
 	{
-		foreach (Node connection in pNode.connections)
+		foreach (Node connection in pNode.all_connections)
 		{
 			drawConnection(pNode, connection);
 		}
@@ -145,8 +154,16 @@ abstract class NodeGraph : Canvas
 
 	protected virtual void drawConnection(Node pStartNode, Node pEndNode)
 	{
-		Pen p = new Pen(Color.FromArgb(255, _connectionPen.Color), _connectionPen.Width);
-		graphics.DrawLine(p, pStartNode.location, pEndNode.location);
+		if (pStartNode.disabled || pEndNode.disabled)
+        {
+			Pen p = new Pen(Color.FromArgb(255, Color.DarkGray), _connectionPen.Width);
+			graphics.DrawLine(p, pStartNode.location, pEndNode.location);
+		}
+        else
+        {
+			Pen p = new Pen(Color.FromArgb(255, _connectionPen.Color), _connectionPen.Width);
+			graphics.DrawLine(p, pStartNode.location, pEndNode.location);
+        }
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
@@ -180,9 +197,22 @@ abstract class NodeGraph : Canvas
 		//do mouse node hightlighting
 		if (newNodeUnderMouse != _nodeUnderMouse)
 		{
-			if (_nodeUnderMouse != null) drawNode(_nodeUnderMouse, _defaultNodeColor);
+			if (_nodeUnderMouse != null)
+			{
+				if (!_nodeUnderMouse.disabled)
+					drawNode(_nodeUnderMouse, _defaultNodeColor);
+				else
+					drawNode(_nodeUnderMouse, _defaultDisabledNodeColor);
+			}
 			_nodeUnderMouse = newNodeUnderMouse;
-			if (_nodeUnderMouse != null) drawNode(_nodeUnderMouse, _highlightedNodeColor);
+			if (_nodeUnderMouse != null)
+			{
+				if (!_nodeUnderMouse.disabled)
+					drawNode(_nodeUnderMouse, _highlightedNodeColor);
+				else
+					drawNode(_nodeUnderMouse, _highlightedDisabledodeColor);
+			}
+
 		}
 
 		//if we are still not hovering over a node, we are done
@@ -196,6 +226,11 @@ abstract class NodeGraph : Canvas
 		{
 			if (Input.GetMouseButtonUp(0)) OnNodeShiftLeftClicked(_nodeUnderMouse);
 			if (Input.GetMouseButtonUp(1)) OnNodeShiftRightClicked(_nodeUnderMouse);
+		}
+		else if (Input.GetKey(Key.D))
+        {
+			if (Input.GetMouseButtonUp(0)) OnNodeLeftClickedWhileHoldDKey(_nodeUnderMouse);
+			if (Input.GetMouseButtonUp(1)) OnNodeRightClickedWhileHoldDKey(_nodeUnderMouse);
 		}
 		else
 		{
@@ -232,5 +267,10 @@ abstract class NodeGraph : Canvas
 
 		//return mouseToNodeDistance < nodeSize;
 	}
+
+	// for disabling and enabling
+	protected abstract void disableNode(Node n);
+	protected abstract void enableNode(Node n);
+
 
 }

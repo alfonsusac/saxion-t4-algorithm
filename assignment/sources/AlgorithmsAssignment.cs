@@ -27,8 +27,8 @@ class AlgorithmsAssignment : Game
 	PathFinder _pathFinder = null;
 
 	//common settings
-	private const int SCALE = 40;       //TODO: experiment with changing this
-	private const int MIN_ROOM_SIZE = 2;	//TODO: use this setting in your dungeon generator
+	private const int SCALE = 10;       //TODO: experiment with changing this
+	private const int MIN_ROOM_SIZE = 3;    //TODO: use this setting in your dungeon generator
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{
@@ -36,10 +36,12 @@ class AlgorithmsAssignment : Game
 		
 		// !!!! Important Toggles: !!!!
 		Dungeon.autoDrawAfterGenerate = false;
-		NodeGraph.doNotDraw = true;
+		NodeGraph.doNotDraw = false;
 		NodeGraphAgent.debug = false;
 		NodeLabelDrawer.disableDrawing = false;
 		NodeLabelDrawer.disableLabelDrawing = false;
+		NodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
+		NodeLabelDrawer.setTileSize(SCALE);
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 		///	BASE SETUP - FEEL FREE TO SKIP
@@ -73,6 +75,7 @@ class AlgorithmsAssignment : Game
 		//Basically this means every pixel drawn in the dungeon has the size of the SCALE setting.
 		//Eg walls are SCALE pixels thick, doors are squares with an area of SCALE * SCALE pixels.
 		Size size = new Size(width / SCALE, height / SCALE);
+
 
 		////////////////////////////////////////
 		//Assignment 1.1 Sufficient (Mandatory)
@@ -110,6 +113,10 @@ class AlgorithmsAssignment : Game
 		//_graph = new HighLevelDungeonNodeGraph(_dungeon);
 		_graph = new NodeGraph_LowLevelDungeon(_dungeon);
 
+		NodeLabelDrawer _nodeLabelDrawer = new NodeLabelDrawer(_graph);
+		NodeLabelDrawer _pathLabelDrawer = new NodeLabelDrawer(_graph);
+		NodeLabelDrawer _tileLabelDrawer = new NodeLabelDrawer(_graph);
+
 		if (_graph != null) _graph.Generate();
 
 		/////////////////////////////////////////////////////////////
@@ -122,11 +129,17 @@ class AlgorithmsAssignment : Game
 		//Assignment 2.2 Good (Optional) TiledView
 		// ---------------------------------------------------		
 		//_tiledView = new SampleTiledView(_dungeon, TileType.GROUND);
-		_tiledView = new TiledDungeonView(_dungeon, TileType.GROUND); 
+		_tiledView = new TiledDungeonView(_dungeon, TileType.GROUND);
 		if (_tiledView != null) _tiledView.Generate();
 
 		//--
-		if(_graph is NodeGraph_LowLevelDungeon) (_graph as NodeGraph_LowLevelDungeon).generateTiled(_tiledView as TiledDungeonView);
+
+		if(_graph is NodeGraph_LowLevelDungeon)
+        {
+			(_graph as NodeGraph_LowLevelDungeon)._view = _tiledView as TiledDungeonView;
+			(_graph as NodeGraph_LowLevelDungeon)?.SetLabelDrawer(_tileLabelDrawer);
+			(_graph as NodeGraph_LowLevelDungeon).generateTiled();
+		} 
 		//--
 
 
@@ -155,8 +168,8 @@ class AlgorithmsAssignment : Game
 		//////////////////////////////////////////////////////////////////////////
 		//Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
 		// ---------------------------------------------------	
-		_pathFinder = new PathFinder_BreadthFirst(_graph, false, true);
-		_agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
+		_pathFinder = new PathFinder_BreadthFirst(_graph, true, true);
+		//////_agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
 
 		/////////////////////////////////////////////////
 		//Assignment 3.2 Good & 3.3 Excellent (Optional)
@@ -166,24 +179,24 @@ class AlgorithmsAssignment : Game
 		//For example for A*, you must choose a setup in which it is possible to demonstrate your 
 		//algorithm works. Find the best place to add your code, and don't forget to move the
 		//PathFindingAgent below the creation of your PathFinder!
-		//_pathFinder = new PathFinder_Dijkstra(_graph, true);
+		_pathFinder = new PathFinder_Dijkstra(_graph, true, false);
+		_pathFinder?.SetLabelDrawer(_pathLabelDrawer);
+
+		_agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
+		_agent?.SetLabelDrawer(_nodeLabelDrawer);
 
 		//------------------------------------------------------------------------------------------
 		/// REQUIRED BLOCK OF CODE TO ADD ALL OBJECTS YOU CREATED TO THE SCREEN IN THE CORRECT ORDER
 		/// LOOK BUT DON'T TOUCH :)
 
-		// THE LABEL DRAWER
-        NodeLabelDrawer _nodeLabelDrawer = new NodeLabelDrawer(_graph, _agent);
-        _nodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
-        if (_agent != null)			_agent.SetLabelDrawer(_nodeLabelDrawer);
-		if (_pathFinder != null)	_pathFinder.SetLabelDrawer(_nodeLabelDrawer);
-
-		if (grid != null)		AddChild(grid);
+		if (grid != null)		AddChild(grid);	
 		if (_dungeon != null)	AddChild(_dungeon);
         if (_tiledView != null) AddChild(_tiledView);
 		if (_graph != null)		AddChild(_graph);
+        if (_graph != null && _nodeLabelDrawer != null)		AddChild(_tileLabelDrawer); //node label display on top of that
         if (_pathFinder != null)AddChild(_pathFinder);             //pathfinder on top of that
-        if (_graph != null)		AddChild(_nodeLabelDrawer); //node label display on top of that
+        if (_graph != null && _nodeLabelDrawer != null)		AddChild(_nodeLabelDrawer); //node label display on top of that
+        if (_graph != null && _nodeLabelDrawer != null)		AddChild(_pathLabelDrawer); //node label display on top of that
         if (_agent != null)		AddChild(_agent);                       //and last but not least the agent itself
 
 		/////////////////////////////////////////////////

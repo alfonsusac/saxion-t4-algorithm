@@ -13,7 +13,7 @@ using System.Drawing;
  * TODO:
  * - Create a subclass of this class, and override the generate method, see the generate method below for an example.
  */
- class SampleDungeonNodeGraph : NodeGraph
+internal class SampleDungeonNodeGraph : NodeGraph
 {
 	protected Dungeon _dungeon;
 
@@ -73,4 +73,13 @@ using System.Drawing;
 		return new Point((int)centerX, (int)centerY);
 	}
 
+    protected override void disableNode(Node n)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    protected override void enableNode(Node n)
+    {
+        throw new System.NotImplementedException();
+    }
 }

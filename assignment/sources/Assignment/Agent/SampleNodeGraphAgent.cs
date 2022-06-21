@@ -98,19 +98,17 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 	private void DequeueNextNode()
 		{
 			// Graphic Stuff
-
 			_labelDrawer.drawQueuePath(TargetsQueue);
-
 			_labelDrawer.markNode(TargetsQueue.Peek());
 
-			if (currentNode != TargetsQueue.Peek() && !currentNode.connections.Contains(TargetsQueue.Peek()))
+			// Dequeue next target 
+			if(currentNode != TargetsQueue.Peek() && !currentNode.isNeighbor(TargetsQueue.Peek()))
+			//if (currentNode != TargetsQueue.Peek() && !currentNode.active_connections.Contains(TargetsQueue.Peek()))
 			{
 				Console.WriteLine($"WARNING!: At{currentNode} The next target {TargetsQueue.Peek()} is not neighboring node");
 			}
 			
 			_target = TargetsQueue.Dequeue();
-
-			//toggleMovingStatus(true);
 		}
 
 	// ------------------------------------------------

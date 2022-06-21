@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 /**
@@ -13,7 +14,29 @@ using System.Drawing;
  */
 class Node
 {
-	public readonly List<Node> connections = new List<Node>();
+	private readonly List<Node> connections = new List<Node>();
+
+	public List<Node> active_connections 
+	{ 
+		get
+        {
+			return connections.FindAll( e => e.disabled == false );
+        } 
+	}	
+	public List<Node> disabled_connections 
+	{ 
+		get
+        {
+			return connections.FindAll( e => e.disabled == true );
+        } 
+	}
+
+	public List<Node> all_connections { get { return connections; } }
+
+	public bool isolated { get
+        {
+			return all_connections.Count == 0 ? true : false;
+        } }
 
 	//node data
 	public readonly Point location;
@@ -22,6 +45,8 @@ class Node
 	//Every node has a id that we can display on screen for debugging
 	public readonly string id;
 	private static int lastID = 0;
+	private bool _disabled;
+	public bool disabled { get { return _disabled; } set { _disabled = value; } }
 
 	/**
 	 * Create a node.
@@ -31,13 +56,25 @@ class Node
 	public Node(Point pLocation)
 	{
 		location = pLocation;
+		_disabled = false;
 
 		//use an autoincrementing id as label
 		id = ""+lastID++;
 		//System.Console.WriteLine(id);
 	}
+	public bool isNeighbor(Node n)
+    {
+		if (connections.Contains(n) && !n.disabled)
+			
+			return true;
+		
+		else
 
-	public override string ToString()
+			return false;
+    }
+
+
+    public override string ToString()
 	{
 		return id;
 	}

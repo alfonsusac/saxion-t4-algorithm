@@ -11,7 +11,7 @@ class PathFinder_Recursive : SamplePathFinder
 	public PathFinder_Recursive(NodeGraph pGraph, bool visualized) : base(pGraph,visualized)
 	{ }
 
-	protected int shortestDist = int.MaxValue;
+	protected double shortestDist = int.MaxValue;
 
 	// for recursive stuff
 	private List<Node> tempShortestPath;
@@ -37,14 +37,14 @@ class PathFinder_Recursive : SamplePathFinder
 		callstack.Pop().Run();
 	}
 
-	protected override void traverse(Node n, List<Node> path, int dist = 0)
+	protected override void traverse(Node n, List<Node> path, double dist = 0)
     {
 		Console.Write($"VISINT NODE: {n} | "); path.ForEach(p => Console.WriteLine(p + " ")); Console.WriteLine();
 
-		if (n.connections.Count != 0)
+		if (!n.isolated)
 
 			// Iterate to every unvisted child
-			foreach (Node child in n.connections)
+			foreach (Node child in n.active_connections)
 
 				if (!path.Contains(child))
 
@@ -57,7 +57,7 @@ class PathFinder_Recursive : SamplePathFinder
 						traverseThrough(child, path, dist + 1);
 	}
 
-	protected override void traverseThrough(Node child, List<Node> path, int dist)
+	protected override void traverseThrough(Node child, List<Node> path, double dist)
 	{
 		new Step(this, child, path, dist + 1);
 
@@ -73,7 +73,7 @@ class PathFinder_Recursive : SamplePathFinder
 	}
 
 
-	private void markAsShortest(int dist, List<Node> path)
+	private void markAsShortest(double dist, List<Node> path)
     {
         shortestDist = dist;
 		tempShortestPath = new List<Node>(path);
@@ -84,12 +84,12 @@ class PathFinder_Recursive : SamplePathFinder
 	// for visualization
 	internal class Step : TraverseRecursively
 	{
-		public Step(PathFinder_Recursive r, Node n, List<Node> l = null, int i = 0)
+		public Step(PathFinder_Recursive r, Node n, List<Node> l = null, double i = 0)
 			: base(r, n, l, i) { }
 
-		public override void Add(TraverseRecursively t)
+		public override void Add()
 		{
-			(pf as PathFinder_Recursive).callstack.Push(t as Step);
+			(pf as PathFinder_Recursive).callstack.Push(this);
 		}
 	}
 }

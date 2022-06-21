@@ -1,7 +1,8 @@
 namespace GXPEngine {
 	/// <summary>
 	/// A Camera gameobject, that owns a rectangular render window, and determines the focal point, rotation and scale
-	/// of what's rendered in that window.
+	/// of what's rende
+	/// in that window.
 	/// (Don't forget to add this as child somewhere in the hierarchy.)
 	/// </summary>
 	class Camera : GameObject {

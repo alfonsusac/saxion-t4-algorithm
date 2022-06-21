@@ -109,4 +109,13 @@ class NodeGraph_HighLevelDungeon : NodeGraph
 		return new Point((int)centerX, (int)centerY);
 	}
 
+    protected override void disableNode(Node n)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override void enableNode(Node n)
+    {
+        throw new NotImplementedException();
+    }
 }
