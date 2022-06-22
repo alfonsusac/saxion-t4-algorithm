@@ -139,50 +139,53 @@ class AlgorithmsAssignment : Game
 			(_graph as NodeGraph_LowLevelDungeon)._view = _tiledView as TiledDungeonView;
 			(_graph as NodeGraph_LowLevelDungeon)?.SetLabelDrawer(_tileLabelDrawer);
 			(_graph as NodeGraph_LowLevelDungeon).generateTiled();
-		} 
-		//--
+		}
+        //--
 
 
-		////////////////////////////////////////////////////////////
-		//Assignment 2.2 Good (Optional) RandomWayPointAgent
-		// ---------------------------------------------------		
-		//_agent = new RandomWayPointAgent(_graph);
-		//_agent2 = new RandomWayPointAgent(_graph, -1.0f);
-		//_agent3 = new RandomWayPointAgent(_graph, -2f);
+        ////////////////////////////////////////////////////////////
+        //Assignment 2.2 Good (Optional) RandomWayPointAgent
+        // ---------------------------------------------------		
+        //_agent = new RandomWayPointAgent(_graph);
+        //_agent2 = new RandomWayPointAgent(_graph, -1.0f);
+        //_agent3 = new RandomWayPointAgent(_graph, -2f);
 
-		//////////////////////////////////////////////////////////////
-		//Assignment 2.3 Excellent (Optional) LowLevelDungeonNodeGraph
-		// ---------------------------------------------------		
+        //////////////////////////////////////////////////////////////
+        //Assignment 2.3 Excellent (Optional) LowLevelDungeonNodeGraph
+        // ---------------------------------------------------		
 
-		/////////////////////////////////////////////////////////////////////////////////////////
-		/// ASSIGNMENT 3 : PathFinding and PathFindingAgents
-		///							
-		/// SKIP THIS BLOCK UNTIL YOU'VE FINISHED ASSIGNMENT 2 AND ASKED FOR TEACHER FEEDBACK !
+        /////////////////////////////////////////////////////////////////////////////////////////
+        /// ASSIGNMENT 3 : PathFinding and PathFindingAgents
+        ///							
+        /// SKIP THIS BLOCK UNTIL YOU'VE FINISHED ASSIGNMENT 2 AND ASKED FOR TEACHER FEEDBACK !
 
-		//////////////////////////////////////////////////////////////////////////
-		//Assignment 3.1 Sufficient (Mandatory) - Recursive Pathfinding
-		// ---------------------------------------------------	
-		//_pathFinder = new SamplePathFinder(_graph);
-		//	_pathFinder = new PathFinder_Recursive(_graph, true);
+        //////////////////////////////////////////////////////////////////////////
+        //Assignment 3.1 Sufficient (Mandatory) - Recursive Pathfinding
+        // ---------------------------------------------------	
+        //_pathFinder = new SamplePathFinder(_graph);
+        //	_pathFinder = new PathFinder_Recursive(_graph, true);
 
-		//////////////////////////////////////////////////////////////////////////
-		//Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
-		// ---------------------------------------------------	
-		_pathFinder = new PathFinder_BreadthFirst(_graph, true, true);
-		//////_agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
+        //////////////////////////////////////////////////////////////////////////
+        //Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
+        // ---------------------------------------------------	
+        //_pathFinder = new PathFinder_BreadthFirst(_graph, true);
+        //////_agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
 
-		/////////////////////////////////////////////////
-		//Assignment 3.2 Good & 3.3 Excellent (Optional)
-		//
-		//There are no more explicit TODO's to guide you through these last two parts.
-		//You are on your own. Good luck, make the best of it. Make sure your code is testable.
-		//For example for A*, you must choose a setup in which it is possible to demonstrate your 
-		//algorithm works. Find the best place to add your code, and don't forget to move the
-		//PathFindingAgent below the creation of your PathFinder!
-		_pathFinder = new PathFinder_Dijkstra(_graph, true, false);
-		_pathFinder?.SetLabelDrawer(_pathLabelDrawer);
+        /////////////////////////////////////////////////
+        //Assignment 3.2 Good & 3.3 Excellent (Optional)
+        //
+        //There are no more explicit TODO's to guide you through these last two parts.
+        //You are on your own. Good luck, make the best of it. Make sure your code is testable.
+        //For example for A*, you must choose a setup in which it is possible to demonstrate your 
+        //algorithm works. Find the best place to add your code, and don't forget to move the
+        //PathFindingAgent below the creation of your PathFinder!
+        //_pathFinder = new PathFinder_Dijkstra(_graph, true);
+        //_pathFinder?.SetLabelDrawer(_pathLabelDrawer);
 
-		_agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
+        _pathFinder = new PathFinder_Astar(_graph, true);
+        _pathFinder?.SetLabelDrawer(_pathLabelDrawer);
+
+        _agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
 		_agent?.SetLabelDrawer(_nodeLabelDrawer);
 
 		//------------------------------------------------------------------------------------------

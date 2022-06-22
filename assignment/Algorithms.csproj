@@ -162,6 +162,7 @@
     <Compile Include="sources\Assignment\NodeGraph\NodeGraph.cs" />
     <Compile Include="sources\Assignment\Tiles\TileType.cs" />
     <Compile Include="sources\Assignment\Tiles\TiledView.cs" />
+    <Compile Include="sources\Solution\A3\PathFinder_Astar.cs" />
     <Compile Include="sources\Solution\A3\PathFinder_Dijkstra.cs" />
     <Compile Include="sources\Program.cs" />
     <Compile Include="sources\Assignment\PathFinding\PathFinder.cs" />

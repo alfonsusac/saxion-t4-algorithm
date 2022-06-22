@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 class PathFinder_Dijkstra : PathFinder_BreadthFirst
 {
-    public PathFinder_Dijkstra(NodeGraph graph, bool v, bool p) : base(graph, v, p)
+    public PathFinder_Dijkstra(NodeGraph graph, bool v) : base(graph, v)
     {
 
     }
@@ -34,7 +34,7 @@ class PathFinder_Dijkstra : PathFinder_BreadthFirst
     
     }
 
-    double distanceToNode(Node n1, Node n2)
+    protected double distanceToNode(Node n1, Node n2)
     {
         return System.Math.Sqrt(
             (n2.location.X - n1.location.X) * 

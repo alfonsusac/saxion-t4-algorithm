@@ -4,8 +4,12 @@
 class PathFinder_BreadthFirst : SamplePathFinder
 {
 
-	public PathFinder_BreadthFirst(NodeGraph pGraph, bool visualized, bool pregenerate) : base(pGraph, visualized) 
-	{ }
+	public bool dopregenerate;
+
+	public PathFinder_BreadthFirst(NodeGraph pGraph, bool visualized) : base(pGraph, visualized) 
+	{
+		dopregenerate = true;
+	}
 
 	// Data Structure necessary for BFS
 	protected Dictionary<Node, Node> prevNodes;
@@ -131,9 +135,6 @@ class PathFinder_BreadthFirst : SamplePathFinder
 			}
             path.Insert(0, curr);
 		}
-
-		
-		
 		return null;
     }
 

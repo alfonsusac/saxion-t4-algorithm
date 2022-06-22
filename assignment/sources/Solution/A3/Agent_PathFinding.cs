@@ -18,7 +18,7 @@ class Agent_PathFinding : SampleNodeGraphAgent
 	{
 		_pf = pPathFinder;
 
-		if (_pf is PathFinder_BreadthFirst)
+		if (_pf.GetType() == typeof(PathFinder_BreadthFirst))
 
 			pregenerate = true;
 	}
@@ -58,19 +58,13 @@ class Agent_PathFinding : SampleNodeGraphAgent
 	protected override void Update()
     {
 		// if pregenerate is true, then generate the path at end node.
-		if (pregenerate == true)
-        {
+		if (pregenerate == true) {
 			pregenerate = false;
 
-			if (_pf is PathFinder_BreadthFirst)
+			if (_pf.GetType() == typeof(PathFinder_BreadthFirst))
 
 				(_pf as PathFinder_BreadthFirst).pregenerate(currentNode);
 		}
-
-		if (waitForGeneration)
-        {
-
-        }
 
 		// if we are waiting for generation to complete,  and pf is NO LONGER running, then get shortest path
         if (waitForGeneration && !_pf.IsRunning)
@@ -82,7 +76,7 @@ class Agent_PathFinding : SampleNodeGraphAgent
             {
 				_pf.GetShortestPath()?.ForEach(n => _targetsqueue.Enqueue(n));
 
-				if (_pf is PathFinder_BreadthFirst)
+				if (_pf.GetType() == typeof(PathFinder_BreadthFirst))
 
 					(_pf as PathFinder_BreadthFirst).pregenerate(_pf.Destination);
 			}
