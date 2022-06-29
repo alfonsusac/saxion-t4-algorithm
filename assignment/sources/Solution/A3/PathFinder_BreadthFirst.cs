@@ -28,7 +28,6 @@ class PathFinder_BreadthFirst : SamplePathFinder
 		functionCollection = callqueue;
 
 		prevNodes = new Dictionary<Node, Node>();
-
 		prevNodes[start] = null;
 	}
 

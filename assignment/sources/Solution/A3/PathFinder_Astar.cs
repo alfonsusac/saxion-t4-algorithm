@@ -7,19 +7,21 @@ class PathFinder_Astar : PathFinder_Dijkstra
     {
     }
 
-    protected override void initializeFunction(Node start, Node dest)
+    protected override void initialize(Node start, Node dest)
     {
+        base.initialize(start, dest);
+
         heuristics = new Dictionary<Node, double>();
         heuristics[start] = distanceToNode(start, destination);
-
-        new StepPQ(this, start, prev: null, null, heuristics[start]);
 
         smallestCost = new Dictionary<Node, double>();
         smallestCost[start] = 0;
 
-        prevNodes[start] = null;
     }
-
+    protected override void startTraverse(Node start)
+    {
+        new StepPQ(this, start, null, null, heuristics[start]);
+    }
 
     Dictionary<Node, double> heuristics;
     Dictionary<Node, double> smallestCost;

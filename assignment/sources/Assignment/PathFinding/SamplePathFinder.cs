@@ -167,6 +167,11 @@ class SamplePathFinder : PathFinder	{
 			updatePerFrame = int.MaxValue;
 			updateTime = 1;
         }
+        else
+        {
+			updatePerFrame = 1;
+
+		}
 
 
 		// Only do this if its visualzied.
