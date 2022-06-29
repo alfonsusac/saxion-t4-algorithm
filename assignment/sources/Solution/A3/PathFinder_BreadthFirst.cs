@@ -48,9 +48,9 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 		shortestPath = base.generate(pFrom, pTo);
 
-		lastStartNode = pFrom;
+        lastStartNode = pFrom;
 
-		return shortestPath;
+        return shortestPath;
     }
 
 	protected override void startTraverse(Node start)
@@ -152,7 +152,10 @@ class PathFinder_BreadthFirst : SamplePathFinder
 	internal class Step : TraverseRecursively
 	{
 		public Step(PathFinder_BreadthFirst r, Node n, List<Node> l = null, double i = 0)
-			: base(r,n,l,i){ }
+			: base(r,n,l,i){
+			labelOpacity = 100
+				;
+		}
 
 		public override void Add()
 		{

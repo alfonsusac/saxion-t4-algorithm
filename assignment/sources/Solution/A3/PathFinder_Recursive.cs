@@ -94,11 +94,15 @@ class PathFinder_Recursive : SamplePathFinder
 	//////////////////////////////////////////////////////////////////////////////
 	// for visualization
 	internal class Step : TraverseRecursively
-	{
-		public Step(PathFinder_Recursive r, Node n, List<Node> l = null, double i = 0)
-			: base(r, n, l, i) { }
+    {
+        public Step(PathFinder_Recursive r, Node n, List<Node> l = null, double i = 0)
+            : base(r, n, l, i)
+        {
+			labelOpacity = 2;
+		}
 
-		public override void Add()
+
+        public override void Add()
 		{
 			(pf as PathFinder_Recursive).callstack.Push(this);
 		}

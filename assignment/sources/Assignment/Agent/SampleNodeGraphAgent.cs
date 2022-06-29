@@ -37,15 +37,36 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 		//listen to nodeclicks
 		pNodeGraph.OnNodeLeftClicked += _onNodeClickHandler;
 
-		pNodeGraph.OnNodeRightClicked += jumpToNode;
+		pNodeGraph.OnNodeRightClicked += _onNodeClickJumpToNode;
+
+		pNodeGraph.OnNodeLeftClickedWhileHoldDKey += _onNodeLCWhileD;
+		pNodeGraph.OnNodeRightClickedWhileHoldDKey += _onNodeRCWhileD;
 	}
 	///
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+		protected virtual void _onNodeLCWhileD(Node pNode)
+		{
+
+		}		
+
+		protected virtual void _onNodeRCWhileD(Node pNode)
+		{
+
+		}
 
 		protected override void jumpToNode(Node pNode)
 		{
 			base.jumpToNode(pNode);
 			currentNode = pNode;
+		}
+
+		protected virtual void _onNodeClickJumpToNode(Node pNode)
+		{
+			jumpToNode(pNode);
+			TargetsQueue.Clear();
+			_target = null;
+			_labelDrawer?.clearMark();
 		}
 
 	// ------------------------------------------------
@@ -103,12 +124,18 @@ abstract class SampleNodeGraphAgent : NodeGraphAgent
 
 			// Dequeue next target 
 			if(currentNode != TargetsQueue.Peek() && !currentNode.isNeighbor(TargetsQueue.Peek()))
-			//if (currentNode != TargetsQueue.Peek() && !currentNode.active_connections.Contains(TargetsQueue.Peek()))
 			{
 				Console.WriteLine($"WARNING!: At{currentNode} The next target {TargetsQueue.Peek()} is not neighboring node");
+
+				if (TargetsQueue.Count > 0 && _target != null) currentNode = _target;
+
+				TargetsQueue.Clear();
+			}
+			else
+			{
+				_target = TargetsQueue.Dequeue();
 			}
 			
-			_target = TargetsQueue.Dequeue();
 		}
 
 	// ------------------------------------------------

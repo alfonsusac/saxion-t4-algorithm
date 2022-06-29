@@ -36,6 +36,12 @@ class SamplePathFinder : PathFinder	{
 		this.visualized = visualized;
 		diagnostic = new BasicDiagnostic();
 	}
+	// --- Methods ---------------------------------------------
+	public void StopFinding()
+    {
+		functionCollection = null;
+		running = false;
+	}
 	///
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -136,7 +142,6 @@ class SamplePathFinder : PathFinder	{
 	bool step = false;
 	int updateTime = 1000;
 	int updatePerFrame = 5;
-	bool skip = false;
 	protected override void iterateSteps()
     {
 		if( Input.GetKey(Key.O))
@@ -164,7 +169,7 @@ class SamplePathFinder : PathFinder	{
         if (Input.GetKeyDown(Key.U))
         {
 			step = true;
-			updatePerFrame = int.MaxValue;
+			updatePerFrame = 1000;
 			updateTime = 1;
         }
         else
@@ -187,36 +192,40 @@ class SamplePathFinder : PathFinder	{
 					step = false;
 					lastRun = Time.now;
 
-					for(int i = 0; i < updatePerFrame; i++)
-                    {
-						// If delay is not 1ms, then skip I to the update per frame.
-						if(updateTime != 1) i = updatePerFrame - 1;
+					if(running)
 
-						// If there is something in the stack? then call it.
-						if (_labelDrawer != null && funcCollectionCount() > 0)
-
-							functionForCallingFromList();
-
-						// If the Recursion is finally done
-						if (running == true && funcCollectionCount() == 0)
+						for(int i = 0; i < updatePerFrame; i++)
 						{
-							diagnostic.end();
+							Console.WriteLine("Test");
+						
+							// If delay is not 1ms, then skip I to the update per frame.
+							if(updateTime != 1) i = updatePerFrame - 1;
 
-							Console.WriteLine(GetType().Name + ".Generate: Path generated.");
+							// If there is something in the stack? then call it.
+							if (_labelDrawer != null && funcCollectionCount() > 0)
 
-							GetShortestPath();
+								functionForCallingFromList();
 
-							// apply the last calculated path AND draw it
-							_lastCalculatedPath = shortestPath;
+							// If the Recursion is finally done
+							if (funcCollectionCount() == 0)
+							{
+								diagnostic.end();
 
-							draw();
+								Console.WriteLine(GetType().Name + ".Generate: Path generated.");
 
-							// turn the machine off!
-							running = false;
+								GetShortestPath();
 
-							break;
+								// apply the last calculated path AND draw it
+								_lastCalculatedPath = shortestPath;
+								draw();
+
+								// turn the machine off!
+								running = false;
+
+								break;
+							}
+
 						}
-					}
 
 				}
 		}
@@ -235,6 +244,7 @@ class SamplePathFinder : PathFinder	{
 		protected readonly List<Node> travelPath;
 		public readonly double distance;
 		protected readonly SamplePathFinder pf;
+		protected int labelOpacity = 2;
 
 		public TraverseRecursively(SamplePathFinder r, Node n, List<Node> l = null, double i = 0)
 		{
@@ -243,7 +253,6 @@ class SamplePathFinder : PathFinder	{
 			currentNode = n;
 			if (l != null) travelPath = new List<Node>(l); else travelPath = new List<Node>();
 			distance = i;
-
 
 			Add();
 		}
@@ -266,7 +275,7 @@ class SamplePathFinder : PathFinder	{
 			travelPath.Add(currentNode);
 
 			// and finally draw the path
-			pf._labelDrawer.drawPaths(travelPath, currentNode);
+			pf._labelDrawer.drawPaths(travelPath, currentNode, labelOpacity);
 			// END of PRE TRAVERSAL-----------------------------------------
 
 			// Traverse the node

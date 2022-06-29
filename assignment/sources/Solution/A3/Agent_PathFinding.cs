@@ -21,7 +21,35 @@ class Agent_PathFinding : SampleNodeGraphAgent
 		if (_pf.GetType() == typeof(PathFinder_BreadthFirst))
 
 			pregenerate = true;
+
 	}
+
+	protected override void _onNodeLCWhileD(Node pNode)
+	{
+		interruptAndReGenerate();
+	}
+
+	protected override void _onNodeRCWhileD(Node pNode)
+	{
+		interruptAndReGenerate();
+	}
+
+	protected override void _onNodeClickJumpToNode(Node pNode)
+    {
+		base._onNodeClickJumpToNode(pNode);
+
+		_pf.StopFinding();
+		waitForGeneration = false;
+		dopregenerate(pNode);
+	}
+
+	public void interruptAndReGenerate()
+	{
+		_pf.StopFinding();
+		waitForGeneration = false;
+		dopregenerate(currentNode);
+	}
+
 
 	protected override void onNodeClickHandler(Node pNode)
 	{
@@ -76,9 +104,7 @@ class Agent_PathFinding : SampleNodeGraphAgent
             {
 				_pf.GetShortestPath()?.ForEach(n => _targetsqueue.Enqueue(n));
 
-				if (_pf.GetType() == typeof(PathFinder_BreadthFirst))
-
-					(_pf as PathFinder_BreadthFirst).pregenerate(_pf.Destination);
+				dopregenerate(_pf.Destination);
 			}
 
 
@@ -87,5 +113,14 @@ class Agent_PathFinding : SampleNodeGraphAgent
 		// execute the walk queue.
 		base.Update();
     }
+
+	protected void dopregenerate(Node start)
+    {
+		if (_pf.GetType() == typeof(PathFinder_BreadthFirst))
+
+			(_pf as PathFinder_BreadthFirst).pregenerate(start);
+	}
+
+
 
 }
