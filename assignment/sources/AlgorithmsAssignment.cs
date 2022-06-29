@@ -27,7 +27,7 @@ class AlgorithmsAssignment : Game
 
 	//common settings
 	private const int SCALE = 10;       //TODO: experiment with changing this
-	private const int MIN_ROOM_SIZE = 3;    //TODO: use this setting in your dungeon generator
+	private const int MIN_ROOM_SIZE = 5;    //TODO: use this setting in your dungeon generator
 	private const int SEED = 20;
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
@@ -133,8 +133,8 @@ class AlgorithmsAssignment : Game
         /// SKIP THIS BLOCK UNTIL YOU'VE FINISHED ASSIGNMENT 2 AND ASKED FOR TEACHER FEEDBACK !
 
         //_pathFinder = new PathFinder_Recursive(_graph, true);			// Sufficient
-        _pathFinder = new PathFinder_BreadthFirst(_graph, true);		// Sufficient
-        //_pathFinder = new PathFinder_Dijkstra(_graph, true);			// Good
+        //_pathFinder = new PathFinder_BreadthFirst(_graph, true);		// Sufficient
+        _pathFinder = new PathFinder_Dijkstra(_graph, true);			// Good
         //_pathFinder = new PathFinder_Astar(_graph, true);				// Excellent
 			
 

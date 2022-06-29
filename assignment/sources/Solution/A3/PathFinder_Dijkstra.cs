@@ -46,31 +46,35 @@ class PathFinder_Dijkstra : PathFinder_BreadthFirst
 
     protected override void traverse(Node curr, List<Node> path, double dist = 0)
     {
-        Console.WriteLine($"\n\n\nTraversing {curr}");
-        Console.WriteLine("Priority List: ");
-        priorityList.ForEach(e => Console.Write($" [{e.currentNode} : {e.distance:F1}]\n"));
+        //Console.WriteLine($"\n\n\nTraversing {curr}");
+        //Console.WriteLine("Priority List: ");
+        //priorityList.ForEach(e => Console.Write($" [{e.currentNode} : {e.distance:F1}]\n"));
 
-        // if current node has neighbor
-        if (!curr.isolated)
 
-            // for each neighbor
-            foreach(Node child in curr.active_connections)
+        if (destination == null || (destination != null && !prevNodes.ContainsKey(destination)))
+        {
+            // if current node has neighbor
+            if (!curr.isolated)
 
-                // if neighbor node hasnt been visited yet before
-                if (!prevNodes.ContainsKey(child))
-                {
+                // for each neighbor
+                foreach (Node child in curr.active_connections)
 
-                    if (destination == null || (!prevNodes.ContainsKey(destination)))
+                    // if neighbor node hasnt been visited yet before
+                    if (!prevNodes.ContainsKey(child))
+                    {
+
 
                         // node WILL be added to the Priority List.
                         new StepPQ(this, child, curr, path, dist + distanceToNode(curr, child));
 
-                }
+                    }
 
-        Console.WriteLine("Priority List: "); 
-        priorityList.ForEach( e => Console.Write($" [{e.currentNode} : {e.distance:F1}]\n"));
+            //Console.WriteLine("Priority List: "); 
+            //priorityList.ForEach( e => Console.Write($" [{e.currentNode} : {e.distance:F1}]\n"));
 
-        iterateNext();
+            iterateNext();
+        }
+
 
     }
     internal class StepPQ : Step
