@@ -50,12 +50,7 @@ class PathFinder_Astar : PathFinder_Dijkstra
             // for each neighbor
             foreach(Node child in curr.active_connections)
             {
-                
-
-
                 double currCostValue = dist - heuristics[curr] + distanceToNode(curr, child);
-
-
 
                 if (!smallestCost.ContainsKey(child) || currCostValue < smallestCost[child])
                 {

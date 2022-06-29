@@ -27,8 +27,8 @@ class AlgorithmsAssignment : Game
 
 	//common settings
 	private const int SCALE = 10;       //TODO: experiment with changing this
-	private const int MIN_ROOM_SIZE = 5;    //TODO: use this setting in your dungeon generator
-	private const int SEED = 20;
+	private const int MIN_ROOM_SIZE = 7;    //TODO: use this setting in your dungeon generator
+	private const int SEED = 23;
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{
@@ -36,10 +36,10 @@ class AlgorithmsAssignment : Game
 		
 		// !!!! Important Toggles: !!!!
 		Dungeon.autoDrawAfterGenerate = false;
-		NodeGraph.doNotDraw = false;
+		NodeGraph.doNotDraw = true;
 		NodeGraphAgent.debug = false;
-		NodeLabelDrawer.disableDrawing = false;
-		NodeLabelDrawer.disableLabelDrawing = false;
+		NodeLabelDrawer.disableDrawing = false; // disable for LowLevel
+		NodeLabelDrawer.disableLabelDrawing = false; 
 		NodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
 		NodeLabelDrawer.setTileSize(SCALE);
 
@@ -134,8 +134,8 @@ class AlgorithmsAssignment : Game
 
         //_pathFinder = new PathFinder_Recursive(_graph, true);			// Sufficient
         //_pathFinder = new PathFinder_BreadthFirst(_graph, true);		// Sufficient
-        _pathFinder = new PathFinder_Dijkstra(_graph, true);			// Good
-        //_pathFinder = new PathFinder_Astar(_graph, true);				// Excellent
+        //_pathFinder = new PathFinder_Dijkstra(_graph, true);			// Good
+        _pathFinder = new PathFinder_Astar(_graph, true);				// Excellent
 			
 
 

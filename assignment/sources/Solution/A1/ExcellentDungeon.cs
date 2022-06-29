@@ -325,7 +325,7 @@ class ExcellentDungeon : Dungeon
             };
 
             // the bigger the rarer.
-            int ChanceOfGeneratingNewDoors = 4;
+            int ChanceOfGeneratingNewDoors = random.Next(100);
 
             if (doorsOfRoom[r][WEST].Count == 0)
                 if (random.Next(0, ChanceOfGeneratingNewDoors) == 0)
