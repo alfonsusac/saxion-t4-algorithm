@@ -110,20 +110,21 @@ class PathFinder_BreadthFirst : SamplePathFinder
 	// Overriding traverse method
 	protected override void traverse(Node curr, List<Node> path, double dist = 0)
 	{	
-        if (!curr.isolated)
-            // Iterate to every child
-            foreach (Node child in curr.active_connections)
+		if (destination == null || (destination != null && curr != destination && !prevNodes.ContainsKey(destination)))
+        {
+			if (!curr.isolated)
+				// Iterate to every child
+				foreach (Node child in curr.active_connections)
 
-                if (!prevNodes.ContainsKey(child))
-                {
-					prevNodes[child] = curr;
-
-					if (destination == null || (child != destination && !prevNodes.ContainsKey(destination)) )
+					if (!prevNodes.ContainsKey(child))
+					{
+						prevNodes[child] = curr;
 
 						new Step(this, child, path, dist + 1);
-				}
+					}
 
-		iterateNext();
+			iterateNext();
+		}
 	}
 	protected virtual void iterateNext()
     {

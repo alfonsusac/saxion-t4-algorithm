@@ -80,7 +80,7 @@ class SamplePathFinder : PathFinder	{
 			destination = dest; running = false;
 
 			// Resetting Graphic Stuff
-			if (_labelDrawer != null) _labelDrawer.clearQueueLabels();
+			_labelDrawer?.clearQueueLabels();
 
 
 			// Initialize for every subclass
@@ -105,6 +105,7 @@ class SamplePathFinder : PathFinder	{
 		public List<Node> GetShortestPath()
 		{
 				//if (running == true && visualized) throw new Exception("Machine is Still Running!!");
+			_labelDrawer?.clearQueueLabels();
 
 			List<Node> generatedPath = getShortestPath();
 
@@ -166,7 +167,7 @@ class SamplePathFinder : PathFinder	{
 				step = true;
 			}
         }
-        if (Input.GetKeyDown(Key.U))
+        if (Input.GetKey(Key.U))
         {
 			step = true;
 			updatePerFrame = 1000;
