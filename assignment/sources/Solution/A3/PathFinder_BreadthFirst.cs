@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 
 class PathFinder_BreadthFirst : SamplePathFinder
@@ -53,6 +54,11 @@ class PathFinder_BreadthFirst : SamplePathFinder
 		return shortestPath;
     }
 
+	protected override void startTraverse(Node start)
+	{
+		new Step(this, start);
+	}
+
 	protected override List<Node> getShortestPath()
 	{
 		if (destination == null) return null; //for pregenerated paths
@@ -65,6 +71,29 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 		while (prevNodes.ContainsKey(curr))
 		{
+            Console.WriteLine($"Curr {curr} <- Prev {prevNodes[curr]}");
+            curr = prevNodes[curr];
+			if (curr == null)
+			{
+				lastStartNode = path[0];
+				return path;
+			}
+			path.Insert(0, curr);
+		}
+
+		return null;
+	}
+
+	private List<Node> generateShortestPath(Node dest)
+	{
+		if (dest == null) return null; //for pregenerated paths
+
+		Node curr = dest;
+		List<Node> path = new List<Node>();
+		path.Insert(0, curr); // Not do insert because of O(n) // shouldve declared a linked list
+
+		while (prevNodes.ContainsKey(curr))
+		{
 			//Console.WriteLine($"Curr {curr} <- Prev {prevNodes[curr]}");
 			curr = prevNodes[curr];
 			if (curr == null)
@@ -74,7 +103,6 @@ class PathFinder_BreadthFirst : SamplePathFinder
 			}
 			path.Insert(0, curr);
 		}
-
 		return null;
 	}
 
@@ -116,27 +144,7 @@ class PathFinder_BreadthFirst : SamplePathFinder
 
 
 
-	private List<Node> generateShortestPath(Node dest)
-    {
-		if(dest == null) return null; //for pregenerated paths
 
-		Node curr = dest;
-		List<Node> path = new List<Node>();
-		path.Insert(0, curr);
-
-		while (prevNodes.ContainsKey(curr))
-        {
-			//Console.WriteLine($"Curr {curr} <- Prev {prevNodes[curr]}");
-			curr = prevNodes[curr];
-			if (curr == null)
-			{
-				lastStartNode = path[0];
-				return path;
-			}
-            path.Insert(0, curr);
-		}
-		return null;
-    }
 
 
 

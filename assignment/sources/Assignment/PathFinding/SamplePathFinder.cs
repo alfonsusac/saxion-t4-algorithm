@@ -54,13 +54,13 @@ class SamplePathFinder : PathFinder	{
 		if (visualized)
 		{
 			running = true;
-			traverse(pFrom, new List<Node>());
-
+			startTraverse(pFrom);
 			return null;
 		}
 		else
 		{
-			traverse(pFrom, new List<Node>());
+			startTraverse(pFrom);
+			//traverse(pFrom, new List<Node>());
 
 			return GetShortestPath();
 		}
@@ -86,6 +86,13 @@ class SamplePathFinder : PathFinder	{
 	}
 
 			protected virtual void initialize(Node start, Node dest) { throw new NotImplementedException(); }
+
+	// ------------------------------------------------
+		
+		protected virtual void startTraverse(Node start)
+		{
+			throw new NotImplementedException();
+		}
 
 	// ------------------------------------------------
 			
@@ -128,7 +135,8 @@ class SamplePathFinder : PathFinder	{
 	bool paused = false;
 	bool step = false;
 	int updateTime = 1000;
-	const int updatePerFrame = 5;
+	int updatePerFrame = 5;
+	bool skip = false;
 	protected override void iterateSteps()
     {
 		if( Input.GetKey(Key.O))
@@ -153,6 +161,12 @@ class SamplePathFinder : PathFinder	{
 				step = true;
 			}
         }
+        if (Input.GetKeyDown(Key.U))
+        {
+			step = true;
+			updatePerFrame = int.MaxValue;
+			updateTime = 1;
+        }
 
 
 		// Only do this if its visualzied.
@@ -170,6 +184,7 @@ class SamplePathFinder : PathFinder	{
 
 					for(int i = 0; i < updatePerFrame; i++)
                     {
+						// If delay is not 1ms, then skip I to the update per frame.
 						if(updateTime != 1) i = updatePerFrame - 1;
 
 						// If there is something in the stack? then call it.
@@ -193,6 +208,8 @@ class SamplePathFinder : PathFinder	{
 
 							// turn the machine off!
 							running = false;
+
+							break;
 						}
 					}
 
@@ -222,6 +239,7 @@ class SamplePathFinder : PathFinder	{
 			if (l != null) travelPath = new List<Node>(l); else travelPath = new List<Node>();
 			distance = i;
 
+
 			Add();
 		}
 
@@ -232,13 +250,24 @@ class SamplePathFinder : PathFinder	{
 
 		public void Run()
 		{
+			// PRE TRAVERSAL-----------------------------------------
+			// Count number of visits for label drawing (graphical)
 			pf._labelDrawer.countVisits(currentNode);
-			pf.diagnostic.traverse();
-			travelPath.Add(currentNode);
-			pf._labelDrawer.drawPaths(travelPath, currentNode);
 
+			// Register a traverse to diagnostic counter (diagnostic)
+			pf.diagnostic.traverse();
+
+			// Add current node to travel path
+			travelPath.Add(currentNode);
+
+			// and finally draw the path
+			pf._labelDrawer.drawPaths(travelPath, currentNode);
+			// END of PRE TRAVERSAL-----------------------------------------
+
+			// Traverse the node
 			pf.traverse(currentNode, travelPath, distance);
 			
+			// remove current path  from travel path (for back tracking)
 			travelPath.RemoveAt(travelPath.Count - 1);
 		}
 

@@ -27,8 +27,9 @@ class AlgorithmsAssignment : Game
 	PathFinder _pathFinder = null;
 
 	//common settings
-	private const int SCALE = 10;       //TODO: experiment with changing this
-	private const int MIN_ROOM_SIZE = 3;    //TODO: use this setting in your dungeon generator
+	private const int SCALE = 75;       //TODO: experiment with changing this
+	private const int MIN_ROOM_SIZE = 1;    //TODO: use this setting in your dungeon generator
+	private const int SEED = 13;
 
 	public AlgorithmsAssignment() : base(1280, 768, false, true, -1, -1, false)
 	{
@@ -44,36 +45,19 @@ class AlgorithmsAssignment : Game
 		NodeLabelDrawer.setTileSize(SCALE);
 
 		/////////////////////////////////////////////////////////////////////////////////////////
-		///	BASE SETUP - FEEL FREE TO SKIP
+		///	?? BASE SETUP - FEEL FREE TO SKIP
 
 		//set our default background color and title
 		GL.ClearColor(0, 0, 0, 1);
 		GL.glfwSetWindowTitle("Algorithms Game");
 
-		//The simplest approach to visualize a dungeon, is using black and white squares
-		//to show where the walls (black) and walkable areas/doors (white) are.
-		//A quick and easy way to implement that is by creating a small canvas, 
-		//draw black and white pixels on it and scale it up by an insane amount (e.g. 40).
-		//
-		//To visualize where these scaled pixels are we also add a grid, where we use
-		//this same SCALE value as a grid size setting. Comment out the next line to hide it.
+		
+		// ??
 		Grid grid = new Grid(width, height, SCALE);
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 		///	ASSIGNMENT 1 : DUNGEON - READ CAREFULLY
 		///
-
-		//The Dungeon in this assignment is an object that holds Rooms & Doors instances, and
-		//extends a canvas that we scale up so that it can visualize these rooms & doors.
-		//In a 'real' setting you would split this 'model' of the dungeon from the visualization,
-		//but we chose to not make it more complicated than necessary.
-
-		//To calculate the size of the dungeon we can create, we take our screen size and
-		//divide it by how much we want to scale everything up. For example if our screen size is 800 
-		//and the dungeon scale 40, we would like our dungeon to have a max width of 20 'units'
-		//so that if we scale it up by 40, its screenwidth is 800 pixels again.
-		//Basically this means every pixel drawn in the dungeon has the size of the SCALE setting.
-		//Eg walls are SCALE pixels thick, doors are squares with an area of SCALE * SCALE pixels.
 		Size size = new Size(width / SCALE, height / SCALE);
 
 
@@ -82,23 +66,13 @@ class AlgorithmsAssignment : Game
 		//---------------------------------------------------
 		//_dungeon = new SampleDungeon(size);
 		//_dungeon = new SufficientDungeon(size);
-
-		/////////////////////////////////
-		//Assignment 1.2 Good (optional)
-		//---------------------------------------------------
 		//_dungeon = new GoodDungeon(size);
-
-		//////////////////////////////////////
-		//Assignment 1.3 Excellent (optional)
-		//---------------------------------------------------
-		_dungeon = new ExcellentDungeon(size);
+		_dungeon = new ExcellentDungeon(size, SEED);
 
         if (_dungeon != null)
 		{
-			//assign the SCALE we talked about above, so that it no longer looks like a tinietiny stamp:
-			_dungeon.scale = SCALE;
-			//Tell the dungeon to generate rooms and doors with the given MIN_ROOM_SIZE
-			_dungeon.Generate(MIN_ROOM_SIZE);
+			_dungeon.scale = SCALE; //assign the SCALE we talked about above, so that it no longer looks like a tinietiny stamp:
+			_dungeon.Generate(MIN_ROOM_SIZE); //Tell the dungeon to generate rooms and doors with the given MIN_ROOM_SIZE
 		}
 
 		/////////////////////////////////////////////////////////////////////////////////////////
@@ -159,34 +133,17 @@ class AlgorithmsAssignment : Game
         ///							
         /// SKIP THIS BLOCK UNTIL YOU'VE FINISHED ASSIGNMENT 2 AND ASKED FOR TEACHER FEEDBACK !
 
-        //////////////////////////////////////////////////////////////////////////
-        //Assignment 3.1 Sufficient (Mandatory) - Recursive Pathfinding
-        // ---------------------------------------------------	
-        //_pathFinder = new SamplePathFinder(_graph);
-        //	_pathFinder = new PathFinder_Recursive(_graph, true);
+        _pathFinder = new PathFinder_Recursive(_graph, true);			// Sufficient
+        //_pathFinder = new PathFinder_BreadthFirst(_graph, true);		// Sufficient
+        //_pathFinder = new PathFinder_Dijkstra(_graph, true);			// Good
+        //_pathFinder = new PathFinder_Astar(_graph, true);				// Excellent
+			
 
-        //////////////////////////////////////////////////////////////////////////
-        //Assignment 3.1 Sufficient (Mandatory) - BreadthFirst Pathfinding
-        // ---------------------------------------------------	
-        //_pathFinder = new PathFinder_BreadthFirst(_graph, true);
-        //////_agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
-
-        /////////////////////////////////////////////////
-        //Assignment 3.2 Good & 3.3 Excellent (Optional)
-        //
-        //There are no more explicit TODO's to guide you through these last two parts.
-        //You are on your own. Good luck, make the best of it. Make sure your code is testable.
-        //For example for A*, you must choose a setup in which it is possible to demonstrate your 
-        //algorithm works. Find the best place to add your code, and don't forget to move the
-        //PathFindingAgent below the creation of your PathFinder!
-        //_pathFinder = new PathFinder_Dijkstra(_graph, true);
-        //_pathFinder?.SetLabelDrawer(_pathLabelDrawer);
-
-        _pathFinder = new PathFinder_Astar(_graph, true);
-        _pathFinder?.SetLabelDrawer(_pathLabelDrawer);
 
         _agent = new Agent_PathFinding(_graph, _pathFinder as SamplePathFinder);
-		_agent?.SetLabelDrawer(_nodeLabelDrawer);
+
+        _pathFinder.SetLabelDrawer(_pathLabelDrawer);
+		_agent.SetLabelDrawer(_nodeLabelDrawer);
 
 		//------------------------------------------------------------------------------------------
 		/// REQUIRED BLOCK OF CODE TO ADD ALL OBJECTS YOU CREATED TO THE SCREEN IN THE CORRECT ORDER

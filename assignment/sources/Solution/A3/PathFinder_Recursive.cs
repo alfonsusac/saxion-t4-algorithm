@@ -31,15 +31,32 @@ class PathFinder_Recursive : SamplePathFinder
 		tempShortestPath = null;
 
 	}
+
+	protected override void startTraverse(Node start)
+    {
+		new Step(this, start);
+    }
+
 	protected virtual void CallfromStack()
 	{
-		Console.WriteLine("CallfromStack");
+		//Console.WriteLine("CallfromStack");
 		callstack.Pop().Run();
 	}
 
 	protected override void traverse(Node n, List<Node> path, double dist = 0)
     {
-		Console.Write($"VISINT NODE: {n} | "); path.ForEach(p => Console.WriteLine(p + " ")); Console.WriteLine();
+		//Console.Write($"VISINT NODE: {n} | "); path.ForEach(p => Console.WriteLine(p + " ")); Console.WriteLine();
+
+
+		if (n == destination)
+
+			if (dist + 1 < shortestDist)
+
+				markAsShortest(dist + 1, path);
+
+			else { }
+
+		else
 
 		if (!n.isolated)
 
@@ -48,13 +65,7 @@ class PathFinder_Recursive : SamplePathFinder
 
 				if (!path.Contains(child))
 
-					if (n == destination && dist + 1 < shortestDist)
-
-						markAsShortest(dist + 1, path);
-
-					else
-
-						traverseThrough(child, path, dist + 1);
+					traverseThrough(child, path, dist + 1);
 	}
 
 	protected override void traverseThrough(Node child, List<Node> path, double dist)

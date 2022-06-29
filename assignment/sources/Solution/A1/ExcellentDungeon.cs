@@ -9,12 +9,14 @@ class ExcellentDungeon : Dungeon
 
     //Random random = new Random(15512);
     //4
-    Random random = new Random(13);
+    Random random;
     bool debug = false;
 
-    public ExcellentDungeon(Size pSize) : base(pSize)
+    public ExcellentDungeon(Size pSize, int seed) : base(pSize)
     {
         canvas = new EasyDraw(pSize.Width, pSize.Height);
+
+        random = new Random(seed);
 
         canvas.texture.Bind();
         GL.TexParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);

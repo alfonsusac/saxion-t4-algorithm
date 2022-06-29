@@ -26,12 +26,12 @@ class PathFinder_Dijkstra : PathFinder_BreadthFirst
         priorityList = new List<StepPQ>();
         inList = new Dictionary<Node, (double dist, StepPQ func)>();
 
-        new StepPQ(this, start, prev: null, null, 0);
-
-
         functionForCallingFromList = CallfromPriorityList;
         functionCollection = priorityList;
-    
+    }
+    protected override void startTraverse(Node start)
+    {
+        new StepPQ(this, start, null);
     }
 
     protected double distanceToNode(Node n1, Node n2)
