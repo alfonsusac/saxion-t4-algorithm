@@ -123,6 +123,10 @@ class PathFinder_BreadthFirst : SamplePathFinder
 						new Step(this, child, path, dist + 1);
 					}
 			iterateNext();
+        }
+        else
+        {
+			callqueue.Clear();
 		}
 	}
 	protected virtual void iterateNext()

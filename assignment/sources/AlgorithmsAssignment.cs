@@ -133,9 +133,9 @@ class AlgorithmsAssignment : Game
         /// SKIP THIS BLOCK UNTIL YOU'VE FINISHED ASSIGNMENT 2 AND ASKED FOR TEACHER FEEDBACK !
 
         //_pathFinder = new PathFinder_Recursive(_graph, true);			// Sufficient
-        //_pathFinder = new PathFinder_BreadthFirst(_graph, true);		// Sufficient
+        _pathFinder = new PathFinder_BreadthFirst(_graph, true);		// Sufficient
         //_pathFinder = new PathFinder_Dijkstra(_graph, true);			// Good
-        _pathFinder = new PathFinder_Astar(_graph, true);				// Excellent
+        //_pathFinder = new PathFinder_Astar(_graph, true);				// Excellent
 			
 
 
