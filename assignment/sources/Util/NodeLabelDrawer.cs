@@ -172,11 +172,11 @@ class NodeLabelDrawer : Canvas
 			foreach (Node m in marked)
 			{
 				graphics.FillRectangle(
-					brush: new SolidBrush(Color.FromArgb(25, Color.Brown)),
-					x: m.location.X - tileSize * 2,
-					y: m.location.Y - tileSize * 2,
-					width: 4 * tileSize,
-					height: 4 * tileSize);
+					brush: new SolidBrush(Color.FromArgb(255, Color.Brown)),
+					x: m.location.X - tileSize/2 ,
+					y: m.location.Y - tileSize/2 ,
+					width:  tileSize,
+					height:  tileSize);
 
 				//graphics.FillEllipse(
 				//	Brushes.White,
