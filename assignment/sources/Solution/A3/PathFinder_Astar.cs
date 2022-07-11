@@ -71,27 +71,6 @@ class PathFinder_Astar : PathFinder_Dijkstra
                     new StepPQ(this, child, curr, path, currCostValue + heuristics[child]);
                 }
             }
-
-                //// if neighbor node hasnt been visited yet before
-                //if (!prevNodes.ContainsKey(child))
-                //{
-                //    prevNodes[child] = curr;
-
-
-                //    if (!prevNodes.ContainsKey(destination))
-                //    {
-
-
-
-                //        heuristics[child] = distanceToNode(child, destination);
-
-                //        new StepPQ(this, child, curr, path, dist + distanceToNode(curr, child) + heuristics[child] - heuristics[curr]);
-                //    }
-                //    else
-
-                //        return;
-                //}
-
         Console.WriteLine("Priority List: "); 
         priorityList.ForEach( e => Console.Write($" [{e.currentNode} : {e.distance:F1}]\n"));
 

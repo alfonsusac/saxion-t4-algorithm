@@ -36,7 +36,7 @@ class AlgorithmsAssignment : Game
 
         // !!!! Important Toggles: !!!!
         Dungeon.autoDrawAfterGenerate = false;
-        NodeGraph.doNotDraw = true;
+        NodeGraph.doNotDraw = false;
         NodeGraphAgent.debug = false;
         NodeLabelDrawer.disableDrawing = false; // disable for LowLevel
         NodeLabelDrawer.disableLabelDrawing = false;

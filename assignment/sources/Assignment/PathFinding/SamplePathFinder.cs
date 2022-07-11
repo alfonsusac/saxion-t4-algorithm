@@ -170,7 +170,7 @@ class SamplePathFinder : PathFinder	{
         if (Input.GetKey(Key.U))
         {
 			step = true;
-			updatePerFrame = 1000;
+			updatePerFrame = 100000;
 			updateTime = 1;
         }
         else
