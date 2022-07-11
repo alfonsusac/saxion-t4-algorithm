@@ -43,15 +43,10 @@ class AlgorithmsAssignment : Game
         NodeLabelDrawer.setNodeSize(SCALE / 3 + 1);
         NodeLabelDrawer.setTileSize(SCALE);
 
-        /////////////////////////////////////////////////////////////////////////////////////////
-        ///	?? BASE SETUP - FEEL FREE TO SKIP
-
         //set our default background color and title
         GL.ClearColor(0, 0, 0, 1);
         GL.glfwSetWindowTitle("Algorithms Game");
 
-
-        // ??
         Grid grid = new Grid(width, height, SCALE);
 
         /////////////////////////////////////////////////////////////////////////////////////////
@@ -120,8 +115,6 @@ class AlgorithmsAssignment : Game
         //Assignment 2.2 Good (Optional) RandomWayPointAgent
         // ---------------------------------------------------		
         //_agent = new RandomWayPointAgent(_graph);
-        //_agent2 = new RandomWayPointAgent(_graph, -1.0f);
-        //_agent3 = new RandomWayPointAgent(_graph, -2f);
 
         //////////////////////////////////////////////////////////////
         //Assignment 2.3 Excellent (Optional) LowLevelDungeonNodeGraph

@@ -177,14 +177,6 @@ class NodeLabelDrawer : Canvas
 					y: m.location.Y - tileSize/2 ,
 					width:  tileSize,
 					height:  tileSize);
-
-				//graphics.FillEllipse(
-				//	Brushes.White,
-				//	m.location.X - nodeSize,
-				//	m.location.Y - nodeSize,
-				//	2 * nodeSize,
-				//	2 * nodeSize
-				//);
 			}
 	}
 
