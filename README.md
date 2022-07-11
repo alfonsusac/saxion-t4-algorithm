@@ -1,5 +1,7 @@
 # Maze Pathfinding and Generation
 
+Final Assessment for Algorithm Course at Saxion
+
 # Feature:
 
 - Generate Dungeons based on Rooms and Connected Corridors
