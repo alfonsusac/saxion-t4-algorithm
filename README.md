@@ -2,6 +2,8 @@
 
 Final Assessment for Algorithm Course at Saxion
 
+![Untitled](https://cdn.discordapp.com/attachments/692444420980867153/996008117907234907/unknown.png)
+
 # Feature:
 
 - Generate Dungeons based on Rooms and Connected Corridors
@@ -9,7 +11,7 @@ Final Assessment for Algorithm Course at Saxion
 - Have Morc Travel through 2 points using specified Algorithms
 - Pathfinding Algorithm: Recursive DFS, Breadth First, Dijkstra and Astar
 
-# Controls
+## Controls
 
 ### Pathfinding Algorithm
 
@@ -28,3 +30,11 @@ Ctrl → Speed up Morc’s Movement
 Left Click → Set Destination of Morc
 
 Right Click → Teleport Morc to node
+
+## Installation
+
+Simply Open assignment/Algorithm.sln and Run and Build the application
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
