@@ -33,6 +33,8 @@ Right Click → Teleport Morc to node
 
 ## Installation
 
+Requires .NET Framework 4.0 and Visual Studio
+
 Simply Open assignment/Algorithm.sln and Run and Build the application
 
 ## License
