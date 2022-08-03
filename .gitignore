@@ -42,3 +42,7 @@ ipch/
 !/packages/*/lib/*.dll
 !/packages/*/lib/*/*.dll
 assignment/Algorithms.csproj
+gxpengine/.vs/GXPEngine/FileContentIndex/read.lock
+*.vsidx
+*.vsidx
+gxpengine/.vs/GXPEngine/v17/.suo
